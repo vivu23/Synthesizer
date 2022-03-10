@@ -7,11 +7,7 @@ const dbConnection = require('./connect');
 
 
 // console.log that your server is up and running
-app.listen(port, () => console.log(`Listening on port ${port}`));
-
-// create a GET route
-app.get('/express_backend', (req, res) => {
+app.listen(port, (req, res) => {  
   dbConnection;
-  console.log("Hello");
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
+  console.log( `Server listening on port: ${port}`);
 });

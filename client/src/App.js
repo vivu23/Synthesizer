@@ -25,8 +25,13 @@ state = {
 
   render() {
     return (
-      <h1>Hello World</h1>
-    );
+      <div className="App">
+      <header className="App-header">
+        <h1 className="App-title">Welcome to React</h1>
+      </header>
+      <p className="App-intro">{this.state.data}</p>
+    </div>
+      );
   }
 }
 
