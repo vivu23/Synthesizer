@@ -1,8 +1,9 @@
 import React from "react";
-import '../css/Main.css';
+import '../css/Synthesizer.css';
 
 export const Synthesizer = () => {
     return (
+      <div>
         <ul class="set">
         <li class="white b"></li>
         <li class="black as"></li>
@@ -17,6 +18,7 @@ export const Synthesizer = () => {
         <li class="black cs"></li>
         <li class="white c"></li>
       </ul>
+      </div>
     );
   };
   
