@@ -32,7 +32,7 @@ export default function NavBar() {
           <li className="nav-item">
             <NavLink
               exact
-              to="/cart"
+              to="/about"
               activeClassName="active"
               className="nav-links"
               onClick={handleClick}

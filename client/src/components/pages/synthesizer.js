@@ -1,5 +1,5 @@
 import React from "react";
-import '../css/Synthesizer.css';
+import '../css/Main.css';
 
 export const Synthesizer = () => {
     return (

@@ -14,13 +14,6 @@ body {
   height: 40vmin;
   pointer-events: none;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -47,6 +40,7 @@ body {
 /****************Nav Bar*************************/
 .navbar {
   background-color: brown;
+  height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -77,20 +71,14 @@ body {
   flex-grow: 1;
 }
 
-
 .nav-menu {
   display: flex;
-  list-style: none;
+  padding-top: 30px;
   text-align: center;
+  list-style: none;
   margin-right: 2rem;
 }
 
-.nav-menu-cart {
-  display: flex;
-  list-style: none;
-  text-align: right;
-  margin-right: 2rem;
-}
 
 .nav-links {
   color: yellow;
@@ -100,8 +88,7 @@ body {
   border-bottom: 3px solid transparent;
 }
 .nav-item {
-  padding-top: 100px;
-  line-height: 50px;
+  line-height: 40px;
   margin-right: 1rem;
 }
 
@@ -111,7 +98,7 @@ body {
   height: 3px;
   width: 0;
   background: transparent;
-  transition: width 0.7s ease, background-color 0.5s ease;
+  transition: width 0.7s ease, background-color 0.5s ease
 }
 
 .nav-item:hover:after {
@@ -138,7 +125,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    border-top: 1px solid #fff;
+    border-top: 1px solid #FFA500;
     position: absolute;
     top: 80px;
     left: -110%;
@@ -147,14 +134,14 @@ body {
   }
 
   .nav-menu.active {
-    background: brown;
     left: 0px;
+    background: brown;
     opacity: 1;
     transition: all 0.5s ease;
     z-index: 1;
   }
   .nav-item .active {
-    color: #fff;
+    color: #FFA500;
     border: none;
   }
   .nav-links {
@@ -171,34 +158,17 @@ body {
     transform: translate(-100%, 60%);
     font-size: 1.8rem;
     cursor: pointer;
-    color: #fff;
+    color: yellow;
   }
 }
 
-@media screen and (max-width: 768px) {
-.profile .container{
-  width: 100%;
-}
-.profile table, .profile table tr,   .profile table td,   .profile table th {
-  display: table;
-  margin: 0 !important;
-  width:100% !important;
-  border: none !important;
-}
-.profile table td.left, .profile table td.right {
-  padding: 5% 0 !important;
-  /* border-bottom: 1px solid grey !important; */
-}
-}
-
-
 @media screen and (max-width: 500px) {
-.navbar{
-  min-height: 150px;
-}
-.nav-menu{
-  top: 150px;
-}
+  .navbar{
+    min-height: 150px;
+  }
+  .nav-menu{
+    top: 150px;
+  }
 }
 
 @media screen and (max-width: 380px) {
@@ -206,3 +176,208 @@ body {
   width: 100%;
 }
 }
+
+/*****************Home*********************/
+.set {
+  height:100%;
+  width:34em;
+  padding:3em 0 0 3em;
+  position:relative;
+}
+
+li {
+  margin:0;
+  padding:0;
+  list-style:none;
+  position:relative;
+  float:left
+}
+
+.set .white {
+  height:16em;
+  width:4em;
+  z-index:1;
+  border-left:1px solid #bbb;
+  border-bottom:1px solid #bbb;
+  border-radius:0 0 5px 5px;
+  box-shadow:-1px 0 0 rgba(255,255,255,0.8) inset,0 0 5px #ccc inset,0 0 3px rgba(0,0,0,0.2);
+  background:linear-gradient(to bottom,#eee 0%,#fff 100%)
+}
+
+.set .white:active {
+  border-top:1px solid #777;
+  border-left:1px solid #999;
+  border-bottom:1px solid #999;
+  box-shadow:2px 0 3px rgba(0,0,0,0.1) inset,-5px 5px 20px rgba(0,0,0,0.2) inset,0 0 3px rgba(0,0,0,0.2);
+  background:linear-gradient(to bottom,#fff 0%,#e9e9e9 100%)
+}
+
+.black {
+  height:8em;
+  width:2em;
+  margin:0 0 0 -1em;
+  z-index:2;
+  border:1px solid #000;
+  border-radius:0 0 3px 3px;
+  box-shadow:-1px -1px 2px rgba(255,255,255,0.2) inset,0 -5px 2px 3px rgba(0,0,0,0.6) inset,0 2px 4px rgba(0,0,0,0.5);
+  background:linear-gradient(45deg,#222 0%,#555 100%)
+}
+
+.black:active {
+  box-shadow:-1px -1px 2px rgba(255,255,255,0.2) inset,0 -2px 2px 3px rgba(0,0,0,0.6) inset,0 1px 2px rgba(0,0,0,0.5);
+  background:linear-gradient(to right,#444 0%,#222 100%)
+}
+
+.a,.g,.f,.d,.c {
+  margin:0 0 0 -1em
+}
+
+/*********************Login*****************/
+.container {
+  text-align: center;
+  color: #000;
+  margin: 100px auto 0 auto;
+}
+
+.container > header {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 auto 60px auto;
+  position: relative;
+  height: 25px;
+  width: 250px;
+  overflow: hidden;
+}
+
+.header-headings {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  transition: all 0.4s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+.header-headings > span {
+  margin: 3px 0;
+}
+
+.header-headings.sign-in {
+  transform: translateY(-5px);
+}
+
+.header-headings.sign-up {
+  transform: translateY(-40px);
+}
+
+.container > ul {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 auto 0 auto;
+  position: relative;
+  height: 30px;
+  width: 250px;
+  overflow: visible;
+}
+.options {
+  display: flex;
+  font-size: 1.5rem;
+  align-items: center;
+  width: 350px;
+  padding-right: 10px;
+}
+
+.options > li {
+  cursor: pointer;
+  opacity: .5;
+  transition: all .2s ease;
+}
+
+.options > li:hover {
+  opacity: 1;
+}
+
+.options > li.active {
+  opacity: 1;
+}
+
+.options > li:nth-of-type(2) {
+  margin-left: 15px;
+}
+
+.options > li:last-of-type {
+  margin-left: auto;
+}
+
+.account-form {
+  display: inline-block;
+  flex-direction: column;
+  margin-top: 30px;
+}
+
+.account-form-fields {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  transition: all 0.4s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+.account-form-fields.sign-in {
+  max-height: 123px;
+}
+
+.account-form-fields.sign-up {
+  max-height: 350px;
+}
+
+.account-form-fields > input {
+  border: 0;
+  margin-bottom: 10px;
+  padding: 15px;
+  font-size: 1rem;
+  font-family: Nunito, sans-serif;
+  color: #000;
+  border-radius: 5px;
+  background-color: #f3f3f3;
+}
+
+.account-form-fields > input::placeholder {
+  color: #aaa;
+}
+
+.account-form-fields > input::-webkit-input-placeholder {
+  color: #aaa;
+}
+
+.account-form-fields > input:-ms-input-placeholder {
+  color: #aaa;
+}
+
+.account-form-fields > input:focus {
+  outline: none;
+}
+
+.btn-submit-form {
+  border: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding: 15px 10px;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 1rem;
+  font-family: Nunito, sans-serif;
+  background:#CD853F;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.13);
+  transition: all .2s ease;
+}
+
+.btn-submit-form:hover {
+  background: #FFA500;
+}
+
+.btn-submit-form:active, .btn-submit-form:focus {
+  outline: none;
+  background: yellow;
+}
+

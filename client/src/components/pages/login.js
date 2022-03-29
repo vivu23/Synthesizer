@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "../css/Login.css"
+import "../css/Main.css"
 
 function Form ({ option }) {
 	return (
