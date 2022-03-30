@@ -1,12 +1,14 @@
-const { MongoClient } = require("mongodb").MongoClient;
+const { MongoClient } = require('mongodb').MongoClient;
 const assert = require("assert");
-const mongoose = require("mongoose");
-require("dotenv").config({ path: "server/config.env" });
+const { validationResult } = require('express-validator');
 const username = process.env.UN;
 const pw = process.env.PW;
 const uri = "mongodb+srv://" + username + ":" + pw + "@cluster0.u5nnm.mongodb.net/test";
 const dbName = 'synthesizerDB';
 const dbProducts = 'credentials';
  
-mongoose.connect(uri, {useNewUrlParser: true,useUnifiedTopology: true,})
-.catch(err=> console.log(err));
+MongoClient.connect( uri, { useUnifiedTopology: true }, { useNewUrlParser: true }, function( err, client ) {
+    if (err) throw err;
+    console.log("Connected to MongoDB.");
+
+  });
