@@ -423,6 +423,7 @@ p:last-child:after {
 
 .account-form-fields.sign-in {
 	max-height: 123px;
+  overflow-y: hidden;
 }
 
 .account-form-fields.sign-up {

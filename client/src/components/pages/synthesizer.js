@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component} from "react";
 import "../css/Main.css";
 import Background from "../resources/cityscape_fin.png";
 import * as Tone from "tone";
