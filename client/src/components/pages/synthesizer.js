@@ -8,15 +8,16 @@ class Synthesizer extends Component {
     super();
     this.wavefrom = "sine";
  }
+ async handleKeyDown(e){
+   console.log(e.key);
+   this.chooseKey(e.key.toUpperCase());
+
+ }
   async handleSelect(e) {
     console.log(e.target.value);
     this.wavefrom = e.target.value;
   }
   async handleKey(e) {
-    const synth = new Tone.Synth().toDestination();
-    const now = Tone.now();
-    let type = this.wavefrom;
-    synth.oscillator.type = type;
     var key = "";
     if (e.currentTarget.className === "black-key") {
       e.stopPropagation();
@@ -29,6 +30,14 @@ class Synthesizer extends Component {
       );
       key = e.currentTarget.textContent[e.currentTarget.textContent.length - 1];
     }
+    this.chooseKey(key);
+  }
+  
+  chooseKey(key){
+    const synth = new Tone.Synth().toDestination();
+    const now = Tone.now();
+    let type = this.wavefrom;
+    synth.oscillator.type = type;
     switch (key) {
       // LEFT ROW
       case "Z":
@@ -84,10 +93,11 @@ class Synthesizer extends Component {
         return;
     }
   }
+
   render() {
     return (
       <>
-        <div class="main">
+        <div class="main" onKeyDown={(e) => this.handleKeyDown(e)} tabIndex= "-1">
           <div class="screen">
             <table class="settings_table">
               <td colspan="2" class="synth_sity_image_cell">
@@ -147,13 +157,13 @@ class Synthesizer extends Component {
               </tr>
             </table>
 
-            <div class="keyboard">
+            <div class="keyboard" >
               <ul id="piano" class="piano">
                 <li
                   data-note="C3"
                   class="key"
-                  onClick={(e) => this.handleKey(e)}
-                >
+                  onClick={(e) => this.handleKey(e)} 
+                              >
                   <div
                     data-note="C#3"
                     class="black-key"
