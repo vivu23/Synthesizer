@@ -27,14 +27,19 @@ class Login extends Component {
     ) {
       alert("Please make sure all the fields are filled.");
     } else {
-      await fetch("/login?user=" + this.state.email)
-        .then((res) => res.json())
-        .then((creds) => this.setState({ creds }));
+      await fetch('login/' + this.state.email,{
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
+      })
+        .then(res => res.json())
+        .then(creds => this.setState({ creds }));
       //if the email is not in the databse or wrong password
       if (this.state.creds !== null) {
         alert("Email is already used.");
       } else {
-        await fetch("/login", {
+        await fetch('login/', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -44,22 +49,24 @@ class Login extends Component {
             lastName: this.state.lastName,
           }),
         })
-          .then((res) => res.json())
+          .then(res => res.json())
           .then((body) => console.log(body));
         this.setState({ redirect: true });
       }
+      event.preventDefault();
         }
   }
 
   async handleSubmit(event) {
+    event.preventDefault();
     //if the inputs are empty
     if (this.state.email === "" || this.state.password === "") {
       alert("Please make sure both email and password are filled out.");
     } else {
       //fetch API to get user credential
-      await fetch("login?user=" + this.state.email)
-        .then((res) => res.json())
-        .then((creds) => this.setState({ creds }));
+      await fetch('login/' + this.state.email)
+        .then(res => res.json())
+        .then(creds => this.setState({ creds }));
       //if the email is not in the database or wrong password
       if (
         this.state.creds === null ||
@@ -72,6 +79,7 @@ class Login extends Component {
       }
     }
   }
+  
   handleChange = ({ target }) => {
     this.setState({ [target.name]: target.value });
   };
