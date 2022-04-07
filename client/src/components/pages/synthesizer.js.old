@@ -32,47 +32,12 @@ class Synthesizer extends Component {
     }
     this.chooseKey(key);
   }
-
-
+  
   chooseKey(key){
-
-    // VOLUME
-    var volSliderValue = document.getElementById("volumeValue").value
-    const vol = new Tone.Volume(volSliderValue).toDestination();
-    if(volSliderValue < -30)
-        vol.mute = true;
-        
-
-    // REVERB EFFECT
-    var reverbSliderValue = document.getElementById("reverbValue").value
-    var reverbSliderValue = reverbSliderValue/100;
-    const reverb = new Tone.JCReverb(reverbSliderValue).toDestination();
-
-
-    // DELAY EFFECT
-    var delaySliderValue = document.getElementById("delayValue").value
-    var delaySliderValue = delaySliderValue/100;
-    if(delaySliderValue == 0)
-    {
-        var delayTime = "0";
-    }
-    else {
-        var delayTime = "8n";
-    }
-    const feedbackDelay = new Tone.FeedbackDelay(delayTime, delaySliderValue).toDestination();
-
-
-    // CREATE SYNTH AND APPLY EFFECTS
-    const synth = new Tone.Synth();
-    synth.autostart = true;
-    synth.chain(vol, reverb, feedbackDelay);
-
+    const synth = new Tone.Synth().toDestination();
     const now = Tone.now();
     let type = this.wavefrom;
     synth.oscillator.type = type;
-
-
-
     switch (key) {
       // LEFT ROW
       case "Z":
@@ -145,13 +110,14 @@ class Synthesizer extends Component {
               </td>
               <tr>
                 <td colspan="2" class="synth_sity_title">
-                  <h1>SynthCityX v1.0</h1>
+                  <h1>SynthSityX v1.0</h1>
                 </td>
               </tr>
               <tr>
                 <td class="setting_cell">
                   <div class="center">
                     <span>WAVEFORM</span>
+                    <br />
                     <br />
                     <select
                       name="waveform"
@@ -166,47 +132,28 @@ class Synthesizer extends Component {
                   </div>
                 </td>
 
-
                 <td class="setting_cell">
                   <div class="settingsBar">
                     <div class="center">
-                    <span>VOLUME</span>
-                    <br />
-                        <div class="volume_controller">
-                            <input type="range" min="-30" max="-10" class="slider" id="volumeValue"/>
-                        </div>
+                      <span>VOLUME</span>
+                      <br />
+                      <input
+                        class="volume_bar"
+                        type="range"
+                        min="0.0"
+                        max="1.0"
+                        step="0.01"
+                        value="0.5"
+                        list="volumes"
+                        name="volume"
+                      />
+                      <datalist id="volumes">
+                        <option value="0.0" label="Mute" />
+                        <option value="1.0" label="100%" />
+                      </datalist>
                     </div>
                   </div>
                 </td>
-
-              </tr>
-
-              <tr>
-
-              <td class="setting_cell">
-                <div class="settingsBar">
-                  <div class="center">
-                  <span>DELAY</span>
-                  <br />
-                      <div>
-                          <input type="range" min="0" max="70" class="slider" id="delayValue"/>
-                      </div>
-                  </div>
-                </div>
-              </td>
-
-              <td class="setting_cell">
-                <div class="settingsBar">
-                  <div class="center">
-                  <span>REVERB</span>
-                  <br />
-                      <div>
-                          <input type="range" min="0" max="70" class="slider" id="reverbValue"/>
-                      </div>
-                  </div>
-                </div>
-              </td>
-
               </tr>
             </table>
 
@@ -215,7 +162,7 @@ class Synthesizer extends Component {
                 <li
                   data-note="C3"
                   class="key"
-                  onClick={(e) => this.handleKey(e)}
+                  onClick={(e) => this.handleKey(e)} 
                               >
                   <div
                     data-note="C#3"
