@@ -8,6 +8,7 @@ class Synthesizer extends Component {
     super();
     this.wavefrom = "sine";
  }
+
  async handleKeyDown(e){
    console.log(e.key);
    this.chooseKey(e.key.toUpperCase());
@@ -33,7 +34,6 @@ class Synthesizer extends Component {
     this.chooseKey(key);
   }
 
-
   chooseKey(key){
 
     // VOLUME
@@ -41,23 +41,24 @@ class Synthesizer extends Component {
     const vol = new Tone.Volume(volSliderValue).toDestination();
     if(volSliderValue < -30)
         vol.mute = true;
-        
+
 
     // REVERB EFFECT
     var reverbSliderValue = document.getElementById("reverbValue").value
-    var reverbSliderValue = reverbSliderValue/100;
+    reverbSliderValue = reverbSliderValue/100;
     const reverb = new Tone.JCReverb(reverbSliderValue).toDestination();
 
 
     // DELAY EFFECT
     var delaySliderValue = document.getElementById("delayValue").value
-    var delaySliderValue = delaySliderValue/100;
-    if(delaySliderValue == 0)
+    delaySliderValue = delaySliderValue/100;
+    var delayTime;
+    if(delaySliderValue === 0)
     {
-        var delayTime = "0";
+        delayTime = "0";
     }
     else {
-        var delayTime = "8n";
+        delayTime = "8n";
     }
     const feedbackDelay = new Tone.FeedbackDelay(delayTime, delaySliderValue).toDestination();
 
@@ -65,68 +66,127 @@ class Synthesizer extends Component {
     // CREATE SYNTH AND APPLY EFFECTS
     const synth = new Tone.Synth();
     synth.autostart = true;
-    synth.chain(vol, reverb, feedbackDelay);
+    if(reverbSliderValue === 0)
+        synth.chain(vol, feedbackDelay);
+    else {
+        synth.chain(vol, reverb, feedbackDelay);
+    }
 
+    // APPLY WAVE TYPE
     const now = Tone.now();
     let type = this.wavefrom;
     synth.oscillator.type = type;
 
 
+    //RECORDING STUFF
+    const audio = document.querySelector('audio');
+    const actx = Tone.context;
+    const dest = actx.createMediaStreamDestination();
+    const recorder = new MediaRecorder(dest.stream);
+    //recorder.start();
+    synth.connect(dest);
+    //synth.toDestination();
+
+    // STORE AUDIO DATA STREAM
+    const chunks = [];
+
+    recorder.start();
+    // var startedRecording = document.getElementById("start_recording");
+    // startedRecording.onclick = function(){
+    //     console.log("recording started");
+    //     recorder.start();
+    // }
+    var stoppedRecording = document.getElementById("stop_recording");
+    stoppedRecording.onclick = function(){
+        console.log("recording stopped");
+        recorder.stop();
+    }
+
+    recorder.ondataavailable = evt => chunks.push(evt.data);
+    recorder.onstop = evt => {
+        let blob = new Blob(chunks, {type: 'audio/ogg; codecs=opus'});
+        audio.src = URL.createObjectURL(blob);
+    };
 
     switch (key) {
       // LEFT ROW
       case "Z":
-        return synth.triggerAttackRelease("C3", "8n", now);
+        synth.triggerAttackRelease("C3", "8n", now);
+        break;
       case "S":
-        return synth.triggerAttackRelease("C#3", "8n", now);
+        synth.triggerAttackRelease("C#3", "8n", now);
+        break;
       case "X":
-        return synth.triggerAttackRelease("D3", "8n", now);
+        synth.triggerAttackRelease("D3", "8n", now);
+        break;
       case "D":
-        return synth.triggerAttackRelease("D#3", "8n", now);
+        synth.triggerAttackRelease("D#3", "8n", now);
+        break;
       case "C":
-        return synth.triggerAttackRelease("E3", "8n", now);
+        synth.triggerAttackRelease("E3", "8n", now);
+        break;
       case "V":
-        return synth.triggerAttackRelease("F3", "8n", now);
+        synth.triggerAttackRelease("F3", "8n", now);
+        break;
       case "G":
-        return synth.triggerAttackRelease("F#3", "8n", now);
+        synth.triggerAttackRelease("F#3", "8n", now);
+        break;
       case "B":
-        return synth.triggerAttackRelease("G3", "8n", now);
+        synth.triggerAttackRelease("G3", "8n", now);
+        break;
       case "H":
-        return synth.triggerAttackRelease("G#3", "8n", now);
+        synth.triggerAttackRelease("G#3", "8n", now);
+        break;
       case "N":
-        return synth.triggerAttackRelease("A3", "8n", now);
+        synth.triggerAttackRelease("A3", "8n", now);
+        break;
       case "J":
-        return synth.triggerAttackRelease("A#3", "8n", now);
+        synth.triggerAttackRelease("A#3", "8n", now);
+        break;
       case "M":
-        return synth.triggerAttackRelease("B3", "8n", now);
+        synth.triggerAttackRelease("B3", "8n", now);
+        break;
       // RIGHT ROW
       case "Q":
-        return synth.triggerAttackRelease("C4", "8n", now);
+        synth.triggerAttackRelease("C4", '0.05', now);
+        break;
       case "2":
-        return synth.triggerAttackRelease("C#4", "8n", now);
+        synth.triggerAttackRelease("C#4", "8n", now);
+        break;
       case "W":
-        return synth.triggerAttackRelease("D4", "8n", now);
+        synth.triggerAttackRelease("D4", "8n", now);
+        break;
       case "3":
-        return synth.triggerAttackRelease("D#4", "8n", now);
+        synth.triggerAttackRelease("D#4", "8n", now);
+        break;
       case "E":
-        return synth.triggerAttackRelease("E4", "8n", now);
+        synth.triggerAttackRelease("E4", "8n", now);
+        break;
       case "R":
-        return synth.triggerAttackRelease("F4", "8n", now);
+        synth.triggerAttackRelease("F4", "8n", now);
+        break;
       case "5":
-        return synth.triggerAttackRelease("F#4", "8n", now);
+        synth.triggerAttackRelease("F#4", "8n", now);
+        break;
       case "T":
-        return synth.triggerAttackRelease("G4", "8n", now);
+        synth.triggerAttackRelease("G4", "8n", now);
+        break;
       case "6":
-        return synth.triggerAttackRelease("G#4", "8n", now);
+        synth.triggerAttackRelease("G#4", "8n", now);
+        break;
       case "Y":
-        return synth.triggerAttackRelease("A4", "8n", now);
+        synth.triggerAttackRelease("A4", "8n", now);
+        break;
       case "7":
-        return synth.triggerAttackRelease("A#4", "8n", now);
+        synth.triggerAttackRelease("A#4", "8n", now);
+        break;
       case "U":
-        return synth.triggerAttackRelease("B4", "8n", now);
+        synth.triggerAttackRelease("B4", "8n", now);
+        break;
       default:
-        return;
+        break;
     }
+
   }
 
   render() {
@@ -383,6 +443,16 @@ class Synthesizer extends Component {
                   U
                 </li>
               </ul>
+
+              <audio controls></audio>
+              <button id="start_recording">
+              <b>START recording [not working</b>
+              </button>
+
+              <button id="stop_recording">
+              <b>STOP recording</b>
+              </button>
+
             </div>
           </div>
         </div>
