@@ -6,67 +6,53 @@ import * as Tone from "tone";
 class Synthesizer extends Component {
   constructor(){
     super();
-    this.wavefrom = "sine";
+    this.state ={
+    wavefrom : "sine",
+    volume : -20,
+    reverb : 35,
+    delay : 35
+    };
  }
+
+ onChange(e){
+  this.setState({[e.target.name]: e.target.value});
+ };
 
  async handleKeyDown(e){
-   console.log(e.key);
    this.chooseKey(e.key.toUpperCase());
-
  }
-  async handleSelect(e) {
-    console.log(e.target.value);
-    this.wavefrom = e.target.value;
-  }
+
   async handleKey(e) {
     var key = "";
     if (e.currentTarget.className === "black-key") {
       e.stopPropagation();
-      console.log("Clicked " + e.currentTarget.textContent);
       key = e.currentTarget.textContent;
     } else {
-      console.log(
-        "Clicked " +
-          e.currentTarget.textContent[e.currentTarget.textContent.length - 1]
-      );
       key = e.currentTarget.textContent[e.currentTarget.textContent.length - 1];
     }
     this.chooseKey(key);
   }
 
   chooseKey(key){
-
     // VOLUME
-    var volSliderValue = document.getElementById("volumeValue").value
-    const vol = new Tone.Volume(volSliderValue).toDestination();
-    if(volSliderValue < -30)
+    const vol = new Tone.Volume(this.state.volume).toDestination();
+    if(this.state.volume < -30)
         vol.mute = true;
-
-
     // REVERB EFFECT
-    var reverbSliderValue = document.getElementById("reverbValue").value
-    reverbSliderValue = reverbSliderValue/100;
-    const reverb = new Tone.JCReverb(reverbSliderValue).toDestination();
-
+    const reverb = new Tone.JCReverb(this.state.reverb/100).toDestination();
 
     // DELAY EFFECT
-    var delaySliderValue = document.getElementById("delayValue").value
-    delaySliderValue = delaySliderValue/100;
-    var delayTime;
-    if(delaySliderValue === 0)
+    var delayTime = "0";
+    if(this.state.delay/100 !== 0)
     {
-        delayTime = "0";
-    }
-    else {
         delayTime = "8n";
     }
-    const feedbackDelay = new Tone.FeedbackDelay(delayTime, delaySliderValue).toDestination();
-
+    const feedbackDelay = new Tone.FeedbackDelay(delayTime, this.state.reverb/100).toDestination();
 
     // CREATE SYNTH AND APPLY EFFECTS
     const synth = new Tone.Synth();
     synth.autostart = true;
-    if(reverbSliderValue === 0)
+    if(this.state.reverb/100 === 0)
         synth.chain(vol, feedbackDelay);
     else {
         synth.chain(vol, reverb, feedbackDelay);
@@ -74,39 +60,8 @@ class Synthesizer extends Component {
 
     // APPLY WAVE TYPE
     const now = Tone.now();
-    let type = this.wavefrom;
+    let type = this.state.wavefrom;
     synth.oscillator.type = type;
-
-
-    //RECORDING STUFF
-    const audio = document.querySelector('audio');
-    const actx = Tone.context;
-    const dest = actx.createMediaStreamDestination();
-    const recorder = new MediaRecorder(dest.stream);
-    //recorder.start();
-    synth.connect(dest);
-    //synth.toDestination();
-
-    // STORE AUDIO DATA STREAM
-    const chunks = [];
-
-    recorder.start();
-    // var startedRecording = document.getElementById("start_recording");
-    // startedRecording.onclick = function(){
-    //     console.log("recording started");
-    //     recorder.start();
-    // }
-    var stoppedRecording = document.getElementById("stop_recording");
-    stoppedRecording.onclick = function(){
-        console.log("recording stopped");
-        recorder.stop();
-    }
-
-    recorder.ondataavailable = evt => chunks.push(evt.data);
-    recorder.onstop = evt => {
-        let blob = new Blob(chunks, {type: 'audio/ogg; codecs=opus'});
-        audio.src = URL.createObjectURL(blob);
-    };
 
     switch (key) {
       // LEFT ROW
@@ -186,9 +141,40 @@ class Synthesizer extends Component {
       default:
         break;
     }
+  }
+  //RECORDING FUNCTION
+  handleRecording(){
+    const synth = new Tone.Synth();
+    const audio = document.querySelector('audio');
+    const actx = Tone.context;
+    const dest = actx.createMediaStreamDestination();
+    const recorder = new MediaRecorder(dest.stream);
+    //recorder.start();
+    synth.connect(dest);
+    //synth.toDestination();
+
+    // STORE AUDIO DATA STREAM
+    const chunks = [];
+
+    recorder.start();
+    // var startedRecording = document.getElementById("start_recording");
+    // startedRecording.onclick = function(){
+    //     console.log("recording started");
+    //     recorder.start();
+    // }
+    var stoppedRecording = document.getElementById("stop_recording");
+    stoppedRecording.onclick = function(){
+        console.log("recording stopped");
+        recorder.stop();
+    }
+
+    recorder.ondataavailable = evt => chunks.push(evt.data);
+    recorder.onstop = evt => {
+        let blob = new Blob(chunks, {type: 'audio/ogg; codecs=opus'});
+        audio.src = URL.createObjectURL(blob);
+    };
 
   }
-
   render() {
     return (
       <>
@@ -216,7 +202,7 @@ class Synthesizer extends Component {
                     <select
                       name="waveform"
                       id="waveform_forum"
-                      onChange={(e) => this.handleSelect(e)}
+                      onChange={(e) => this.onChange(e)}
                     >
                       <option value="sine">SINE</option>
                       <option value="square">SQUARE</option>
@@ -226,14 +212,17 @@ class Synthesizer extends Component {
                   </div>
                 </td>
 
-
                 <td class="setting_cell">
                   <div class="settingsBar">
                     <div class="center">
                     <span>VOLUME</span>
                     <br />
                         <div class="volume_controller">
-                            <input type="range" min="-30" max="-10" class="slider" id="volumeValue"/>
+                            <input type="range" 
+                                   min="-30" 
+                                   max="-10" 
+                                   class="slider" value={this.state.volume} name="volume" onChange={(e) => this.onChange(e)}
+                                   id="volumeValue"/>
                         </div>
                     </div>
                   </div>
@@ -249,19 +238,20 @@ class Synthesizer extends Component {
                   <span>DELAY</span>
                   <br />
                       <div>
-                          <input type="range" min="0" max="70" class="slider" id="delayValue"/>
+                          <input type="range" min="0" max="70" name="delay" class="slider" 
+                                 value={this.state.delay} onChange={(e) => this.onChange(e)} id="delayValue"/>
                       </div>
                   </div>
                 </div>
               </td>
-
               <td class="setting_cell">
                 <div class="settingsBar">
                   <div class="center">
                   <span>REVERB</span>
                   <br />
                       <div>
-                          <input type="range" min="0" max="70" class="slider" id="reverbValue"/>
+                          <input type="range" min="0" max="70" name="reverb" value={this.state.reverb} 
+                          onChange={(e) => this.onChange(e)} class="slider" id="reverbValue"/>
                       </div>
                   </div>
                 </div>
@@ -443,18 +433,17 @@ class Synthesizer extends Component {
                   U
                 </li>
               </ul>
-
-              <audio controls></audio>
-              <button id="start_recording">
-              <b>START recording [not working</b>
-              </button>
-
-              <button id="stop_recording">
-              <b>STOP recording</b>
-              </button>
-
             </div>
           </div>
+        </div>
+        <div>
+          <audio controls></audio>
+          <button id="start_recording">
+          <b>START recording [not working</b>
+          </button>
+          <button id="stop_recording">
+          <b>STOP recording</b>
+          </button>
         </div>
       </>
     );

@@ -8,7 +8,7 @@ body {
 
 /****************Nav Bar*************************/
 .navbar {
-  background-color: transparent;
+  background-color: black;
   height: 80px;
   display: flex;
   justify-content: space-between;
