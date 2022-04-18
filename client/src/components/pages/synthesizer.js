@@ -7,29 +7,38 @@ class Synthesizer extends Component {
   constructor(){
     super();
     this.state ={
-    wavefrom : "sine",
-    volume : -20,
-    reverb : 35,
-    delay : 35
-    };
+     waveform : "sine",
+     volume : -20,
+     reverb : 0,
+     delay : 0,
+     recording : [],
+     recorder: 0
+    }
  }
 
  onChange(e){
   this.setState({[e.target.name]: e.target.value});
+  console.log(e.target.name);
+  console.log(e.target.value);
  };
 
  async handleKeyDown(e){
-   this.chooseKey(e.key.toUpperCase());
- }
+  console.log(e.key);
+  this.chooseKey(e.key.toUpperCase());
 
-  async handleKey(e) {
-    var key = "";
-    if (e.currentTarget.className === "black-key") {
-      e.stopPropagation();
-      key = e.currentTarget.textContent;
-    } else {
-      key = e.currentTarget.textContent[e.currentTarget.textContent.length - 1];
-    }
+}
+
+ async handleKey(e) {
+   var key = "";
+   if (e.currentTarget.className === "black-key") {
+     e.stopPropagation();
+     key = e.currentTarget.textContent;
+   } else {
+     key = e.currentTarget.textContent[e.currentTarget.textContent.length - 1];
+   }
+   this.setState({
+    recording: [ ...this.state.recording, key]
+    });
     this.chooseKey(key);
   }
 
@@ -60,9 +69,37 @@ class Synthesizer extends Component {
 
     // APPLY WAVE TYPE
     const now = Tone.now();
-    let type = this.state.wavefrom;
+    let type = this.state.waveform;
     synth.oscillator.type = type;
+    
+    const audio = document.querySelector('audio');
+    const actx = Tone.context;
+    const dest = actx.createMediaStreamDestination();
+    const recorder = new MediaRecorder(dest.stream);
+    //recorder.start();
+    synth.connect(dest);
+    //synth.toDestination();
 
+    // STORE AUDIO DATA STREAM
+    const chunks = [];
+
+    recorder.start();
+    var startedRecording = document.getElementById("start_recording");
+    startedRecording.onclick = function(){
+        console.log("recording started");
+        recorder.start();
+    }
+    var stoppedRecording = document.getElementById("stop_recording");
+    stoppedRecording.onclick = function(){
+        console.log("recording stopped");
+        recorder.stop();
+    }
+
+    recorder.ondataavailable = evt => chunks.push(evt.data);
+    recorder.onstop = evt => {
+        let blob = new Blob(chunks, {type: 'audio/ogg; codecs=opus'});
+        audio.src = URL.createObjectURL(blob);
+    };
     switch (key) {
       // LEFT ROW
       case "Z":
@@ -142,39 +179,10 @@ class Synthesizer extends Component {
         break;
     }
   }
-  //RECORDING FUNCTION
-  handleRecording(){
-    const synth = new Tone.Synth();
-    const audio = document.querySelector('audio');
-    const actx = Tone.context;
-    const dest = actx.createMediaStreamDestination();
-    const recorder = new MediaRecorder(dest.stream);
-    //recorder.start();
-    synth.connect(dest);
-    //synth.toDestination();
 
-    // STORE AUDIO DATA STREAM
-    const chunks = [];
-
-    recorder.start();
-    // var startedRecording = document.getElementById("start_recording");
-    // startedRecording.onclick = function(){
-    //     console.log("recording started");
-    //     recorder.start();
-    // }
-    var stoppedRecording = document.getElementById("stop_recording");
-    stoppedRecording.onclick = function(){
-        console.log("recording stopped");
-        recorder.stop();
-    }
-
-    recorder.ondataavailable = evt => chunks.push(evt.data);
-    recorder.onstop = evt => {
-        let blob = new Blob(chunks, {type: 'audio/ogg; codecs=opus'});
-        audio.src = URL.createObjectURL(blob);
-    };
-
-  }
+ async handleRecording(){
+   
+ }
   render() {
     return (
       <>
@@ -438,7 +446,7 @@ class Synthesizer extends Component {
         </div>
         <div>
           <audio controls></audio>
-          <button id="start_recording">
+          <button id="start_recording" >
           <b>START recording [not working</b>
           </button>
           <button id="stop_recording">
