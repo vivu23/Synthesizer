@@ -8,6 +8,7 @@ class Synthesizer extends Component {
     super();
     this.state ={
      waveform : "sine",
+     octave: 2,
      volume : -20,
      reverb : 0,
      delay : 0,
@@ -47,6 +48,7 @@ class Synthesizer extends Component {
     const vol = new Tone.Volume(this.state.volume).toDestination();
     if(this.state.volume < -30)
         vol.mute = true;
+
     // REVERB EFFECT
     const reverb = new Tone.JCReverb(this.state.reverb/100).toDestination();
 
@@ -71,118 +73,140 @@ class Synthesizer extends Component {
     const now = Tone.now();
     let type = this.state.waveform;
     synth.oscillator.type = type;
-    
+
+    // CALL RECORDING FUNCTION ?
+    //this.handleRecording(synth);
+
+    // CHANGE OCTAVE
+    let octave = [3, 4];
+    console.log(`octave=${this.state.octave}`);
+    if(this.state.octave == 2)
+        console.log("dont do anything");
+    if(this.state.octave > 2){
+            octave[0] += this.state.octave - 2;
+            octave[1] += this.state.octave - 2;
+    }
+    if(this.state.octave == 1){
+            octave[0] = 2;
+            octave[1] = 3;
+    }
+    if(this.state.octave == 0){
+            octave[0] = 1;
+            octave[1] = 2;
+    }
+
+    switch (key) {
+      // LEFT ROW
+      case "Z":
+        synth.triggerAttackRelease(`C${octave[0]}`, "8n", now);
+        break;
+      case "S":
+        synth.triggerAttackRelease(`C#${octave[0]}`, "8n", now);
+        break;
+      case "X":
+        synth.triggerAttackRelease(`D${octave[0]}`, "8n", now);
+        break;
+      case "D":
+        synth.triggerAttackRelease(`D#${octave[0]}`, "8n", now);
+        break;
+      case "C":
+        synth.triggerAttackRelease(`E${octave[0]}`, "8n", now);
+        break;
+      case "V":
+        synth.triggerAttackRelease(`F${octave[0]}`, "8n", now);
+        break;
+      case "G":
+        synth.triggerAttackRelease(`F#${octave[0]}`, "8n", now);
+        break;
+      case "B":
+        synth.triggerAttackRelease(`G${octave[0]}`, "8n", now);
+        break;
+      case "H":
+        synth.triggerAttackRelease(`G#${octave[0]}`, "8n", now);
+        break;
+      case "N":
+        synth.triggerAttackRelease(`A${octave[0]}`, "8n", now);
+        break;
+      case "J":
+        synth.triggerAttackRelease(`A#${octave[0]}`, "8n", now);
+        break;
+      case "M":
+        synth.triggerAttackRelease(`B${octave[0]}`, "8n", now);
+        break;
+      // RIGHT ROW
+      case "Q":
+        synth.triggerAttackRelease(`C${octave[1]}`, '8n', now);
+        break;
+      case "2":
+        synth.triggerAttackRelease(`C#${octave[1]}`, "8n", now);
+        break;
+      case "W":
+        synth.triggerAttackRelease(`D${octave[1]}`, "8n", now);
+        break;
+      case "3":
+        synth.triggerAttackRelease(`D#${octave[1]}`, "8n", now);
+        break;
+      case "E":
+        synth.triggerAttackRelease(`E${octave[1]}`, "8n", now);
+        break;
+      case "R":
+        synth.triggerAttackRelease(`F${octave[1]}`, "8n", now);
+        break;
+      case "5":
+        synth.triggerAttackRelease(`F#${octave[1]}`, "8n", now);
+        break;
+      case "T":
+        synth.triggerAttackRelease(`G${octave[1]}`, "8n", now);
+        break;
+      case "6":
+        synth.triggerAttackRelease(`G#${octave[1]}`, "8n", now);
+        break;
+      case "Y":
+        synth.triggerAttackRelease(`A${octave[1]}`, "8n", now);
+        break;
+      case "7":
+        synth.triggerAttackRelease(`A#${octave[1]}`, "8n", now);
+        break;
+      case "U":
+        synth.triggerAttackRelease(`B${octave[1]}`, "8n", now);
+        break;
+      default:
+        break;
+    } //switch(key)
+}//chooseKey(key)
+
+ async handleRecording(synth){
+     // RECORDING
     const audio = document.querySelector('audio');
     const actx = Tone.context;
     const dest = actx.createMediaStreamDestination();
     const recorder = new MediaRecorder(dest.stream);
-    //recorder.start();
-    synth.connect(dest);
-    //synth.toDestination();
 
-    // STORE AUDIO DATA STREAM
+    synth.connect(dest);
+
+     // ARRAY FOR DATA STREAM
     const chunks = [];
 
-    recorder.start();
+    // HANDLE RECORDING BUTTONS
     var startedRecording = document.getElementById("start_recording");
-    startedRecording.onclick = function(){
-        console.log("recording started");
-        recorder.start();
-    }
     var stoppedRecording = document.getElementById("stop_recording");
+    startedRecording.onclick = function(){
+    console.log("recording started");
+    recorder.start();
+    }
     stoppedRecording.onclick = function(){
-        console.log("recording stopped");
-        recorder.stop();
+    console.log("recording stopped");
+    recorder.stop();
     }
 
+    // STORE DATA INTO ARRAY
     recorder.ondataavailable = evt => chunks.push(evt.data);
     recorder.onstop = evt => {
         let blob = new Blob(chunks, {type: 'audio/ogg; codecs=opus'});
         audio.src = URL.createObjectURL(blob);
     };
-    switch (key) {
-      // LEFT ROW
-      case "Z":
-        synth.triggerAttackRelease("C3", "8n", now);
-        break;
-      case "S":
-        synth.triggerAttackRelease("C#3", "8n", now);
-        break;
-      case "X":
-        synth.triggerAttackRelease("D3", "8n", now);
-        break;
-      case "D":
-        synth.triggerAttackRelease("D#3", "8n", now);
-        break;
-      case "C":
-        synth.triggerAttackRelease("E3", "8n", now);
-        break;
-      case "V":
-        synth.triggerAttackRelease("F3", "8n", now);
-        break;
-      case "G":
-        synth.triggerAttackRelease("F#3", "8n", now);
-        break;
-      case "B":
-        synth.triggerAttackRelease("G3", "8n", now);
-        break;
-      case "H":
-        synth.triggerAttackRelease("G#3", "8n", now);
-        break;
-      case "N":
-        synth.triggerAttackRelease("A3", "8n", now);
-        break;
-      case "J":
-        synth.triggerAttackRelease("A#3", "8n", now);
-        break;
-      case "M":
-        synth.triggerAttackRelease("B3", "8n", now);
-        break;
-      // RIGHT ROW
-      case "Q":
-        synth.triggerAttackRelease("C4", '0.05', now);
-        break;
-      case "2":
-        synth.triggerAttackRelease("C#4", "8n", now);
-        break;
-      case "W":
-        synth.triggerAttackRelease("D4", "8n", now);
-        break;
-      case "3":
-        synth.triggerAttackRelease("D#4", "8n", now);
-        break;
-      case "E":
-        synth.triggerAttackRelease("E4", "8n", now);
-        break;
-      case "R":
-        synth.triggerAttackRelease("F4", "8n", now);
-        break;
-      case "5":
-        synth.triggerAttackRelease("F#4", "8n", now);
-        break;
-      case "T":
-        synth.triggerAttackRelease("G4", "8n", now);
-        break;
-      case "6":
-        synth.triggerAttackRelease("G#4", "8n", now);
-        break;
-      case "Y":
-        synth.triggerAttackRelease("A4", "8n", now);
-        break;
-      case "7":
-        synth.triggerAttackRelease("A#4", "8n", now);
-        break;
-      case "U":
-        synth.triggerAttackRelease("B4", "8n", now);
-        break;
-      default:
-        break;
-    }
-  }
-
- async handleRecording(){
-   
  }
+
   render() {
     return (
       <>
@@ -197,11 +221,49 @@ class Synthesizer extends Component {
                   width="600px"
                 />
               </td>
+
               <tr>
                 <td colspan="2" class="synth_sity_title">
                   <h1>SynthCityX v1.0</h1>
                 </td>
+
               </tr>
+
+              <tr>
+                <td class="setting_cell">
+                <span>AUDIO RECORDING</span>
+                <br />
+                    <audio controls></audio>
+                </td>
+
+                <td class="setting_cell">
+                <span>RECORD</span>
+                <br />
+                    <button id="start_recording">
+                    <b>START</b>
+                    </button>
+
+                    <button id="stop_recording">
+                    <b>STOP</b>
+                    </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="setting_cell">
+                    <span>OCTAVE</span>
+                    <br />
+                    <div>
+                        -2 <input type="range" min="0" max="4" name="octave" class="slider"
+                        value={this.state.octave} onChange={(e) => this.onChange(e)} id="octaveValue"/> +2
+                    </div>
+                </td>
+
+                <td class="setting_cell">
+                    <span>*empty*</span>
+                </td>
+              </tr>
+
               <tr>
                 <td class="setting_cell">
                   <div class="center">
@@ -226,9 +288,9 @@ class Synthesizer extends Component {
                     <span>VOLUME</span>
                     <br />
                         <div class="volume_controller">
-                            <input type="range" 
-                                   min="-30" 
-                                   max="-10" 
+                            <input type="range"
+                                   min="-30"
+                                   max="-10"
                                    class="slider" value={this.state.volume} name="volume" onChange={(e) => this.onChange(e)}
                                    id="volumeValue"/>
                         </div>
@@ -246,7 +308,7 @@ class Synthesizer extends Component {
                   <span>DELAY</span>
                   <br />
                       <div>
-                          <input type="range" min="0" max="70" name="delay" class="slider" 
+                          <input type="range" min="0" max="70" name="delay" class="slider"
                                  value={this.state.delay} onChange={(e) => this.onChange(e)} id="delayValue"/>
                       </div>
                   </div>
@@ -258,7 +320,7 @@ class Synthesizer extends Component {
                   <span>REVERB</span>
                   <br />
                       <div>
-                          <input type="range" min="0" max="70" name="reverb" value={this.state.reverb} 
+                          <input type="range" min="0" max="70" name="reverb" value={this.state.reverb}
                           onChange={(e) => this.onChange(e)} class="slider" id="reverbValue"/>
                       </div>
                   </div>
@@ -445,13 +507,6 @@ class Synthesizer extends Component {
           </div>
         </div>
         <div>
-          <audio controls></audio>
-          <button id="start_recording" >
-          <b>START recording [not working</b>
-          </button>
-          <button id="stop_recording">
-          <b>STOP recording</b>
-          </button>
         </div>
       </>
     );
