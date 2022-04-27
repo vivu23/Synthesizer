@@ -11,10 +11,12 @@ export default function NavBar() {
     <nav className="navbar">
       <div className="nav-container">
         <NavLink exact to="/" className="nav-logo">
-          Synthesizer
+          KV-SYN
+          {/*
           <i className="nav-logo">
               <img src={Logo} alt=""/>
           </i>
+          */}
         </NavLink>
 
         <ul className={click ? "nav-menu active" : "nav-menu"}>

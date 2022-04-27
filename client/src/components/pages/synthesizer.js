@@ -1,10 +1,11 @@
 import React, { Component} from "react";
 import "../css/Main.css";
-import Background from "../resources/cityscape_fin.png";
+import Background from "../resources/KV-SYN-logo.png";
 import * as Tone from "tone";
 
 class Synthesizer extends Component {
-  constructor(){
+
+ constructor(){
     super();
     this.state ={
      waveform : "sine",
@@ -13,7 +14,8 @@ class Synthesizer extends Component {
      reverb : 0,
      delay : 0,
      recording : [],
-     recorder: 0
+     recorder : 0,
+     knob1 : 0
     }
  }
 
@@ -30,6 +32,7 @@ class Synthesizer extends Component {
 }
 
  async handleKey(e) {
+
    var key = "";
    if (e.currentTarget.className === "black-key") {
      e.stopPropagation();
@@ -212,7 +215,9 @@ class Synthesizer extends Component {
       <>
         <div class="main" onKeyDown={(e) => this.handleKeyDown(e)} tabIndex= "-1">
           <div class="screen">
+          <div class="vst">
             <table class="settings_table">
+            {/*
               <td colspan="2" class="synth_sity_image_cell">
                 <img
                   class="synth_sity_image"
@@ -221,14 +226,31 @@ class Synthesizer extends Component {
                   width="600px"
                 />
               </td>
+              */}
 
               <tr>
                 <td colspan="2" class="synth_sity_title">
-                  <h1>SynthCityX v1.0</h1>
+                    <table class="logoTable">
+                        <tr class="mainScreen">
+                            [ some info here ] <br />
+                            etc.               <br /> <br />
+                            seth klupka, vi vu
+                        </tr>
+                        <tr>
+                            <img
+                              class="synth_sity_image"
+                              alt=""
+                              src={Background}
+                              width="600px"
+                            />
+                        </tr>
+                    </table>
                 </td>
 
-              </tr>
 
+
+              </tr>
+              {/*
               <tr>
                 <td class="setting_cell">
                 <span>AUDIO RECORDING</span>
@@ -248,39 +270,49 @@ class Synthesizer extends Component {
                     </button>
                 </td>
               </tr>
-
+              */}
               <tr>
-                <td class="setting_cell">
-                    <span>OCTAVE</span>
-                    <br />
-                    <div>
-                        -2 <input type="range" min="0" max="4" name="octave" class="slider"
-                        value={this.state.octave} onChange={(e) => this.onChange(e)} id="octaveValue"/> +2
-                    </div>
-                </td>
+              <td class="setting_cell">
+                <div class="center">
+                  <span>WAVEFORM</span>
+                  <br />
+                  <select
+                    name="waveform"
+                    id="waveform_forum"
+                    onChange={(e) => this.onChange(e)}
+                  >
+                    <option value="sine">SINE</option>
+                    <option value="square">SQUARE</option>
+                    <option value="sawtooth">SAWTOOTH</option>
+                    <option value="triangle">TRIANGLE</option>
+                  </select>
+                </div>
+              </td>
+
 
                 <td class="setting_cell">
-                    <span>*empty*</span>
+                    <span></span>
                 </td>
               </tr>
 
               <tr>
-                <td class="setting_cell">
-                  <div class="center">
-                    <span>WAVEFORM</span>
-                    <br />
-                    <select
-                      name="waveform"
-                      id="waveform_forum"
-                      onChange={(e) => this.onChange(e)}
-                    >
-                      <option value="sine">SINE</option>
-                      <option value="square">SQUARE</option>
-                      <option value="sawtooth">SAWTOOTH</option>
-                      <option value="triangle">TRIANGLE</option>
-                    </select>
+              <td class="setting_cell">
+                  <span>OCTAVE</span>
+                  <br />
+                  <div>
+                      <input type="range" min="0" max="4" name="octave" class="slider"
+                      value={this.state.octave} onChange={(e) => this.onChange(e)} id="octaveValue"/>
+                      <div class="ticks">
+                        <span class="tick" id="mainTick">|</span>
+                        <span class="tick">|</span>
+                        <span class="tick" id="mainTick">|</span>
+                        <span class="tick">|</span>
+                        <span class="tick" id="mainTick">|</span>
+
+                      </div>
                   </div>
-                </td>
+              </td>
+
 
                 <td class="setting_cell">
                   <div class="settingsBar">
@@ -293,6 +325,29 @@ class Synthesizer extends Component {
                                    max="-10"
                                    class="slider" value={this.state.volume} name="volume" onChange={(e) => this.onChange(e)}
                                    id="volumeValue"/>
+                        </div>
+                        <div class="ticks">
+                          <span class="tick" id="mainTick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick" id="mainTick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick" id="mainTick">|</span>
                         </div>
                     </div>
                   </div>
@@ -310,6 +365,29 @@ class Synthesizer extends Component {
                       <div>
                           <input type="range" min="0" max="70" name="delay" class="slider"
                                  value={this.state.delay} onChange={(e) => this.onChange(e)} id="delayValue"/>
+                                 <div class="ticks">
+                                   <span class="tick" id="mainTick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick" id="mainTick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick" id="mainTick">|</span>
+                                 </div>
                       </div>
                   </div>
                 </div>
@@ -322,6 +400,29 @@ class Synthesizer extends Component {
                       <div>
                           <input type="range" min="0" max="70" name="reverb" value={this.state.reverb}
                           onChange={(e) => this.onChange(e)} class="slider" id="reverbValue"/>
+                          <div class="ticks">
+                            <span class="tick" id="mainTick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick" id="mainTick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick" id="mainTick">|</span>
+                          </div>
                       </div>
                   </div>
                 </div>
@@ -503,6 +604,7 @@ class Synthesizer extends Component {
                   U
                 </li>
               </ul>
+            </div>
             </div>
           </div>
         </div>
