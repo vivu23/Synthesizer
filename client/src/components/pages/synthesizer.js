@@ -2,6 +2,7 @@ import React, { Component} from "react";
 import "../css/Main.css";
 import Background from "../resources/KV-SYN-logo.png";
 import * as Tone from "tone";
+import { ReactMediaRecorder } from "react-media-recorder";
 
 class Synthesizer extends Component {
 
@@ -15,7 +16,6 @@ class Synthesizer extends Component {
      delay : 0,
      recording : [],
      recorder : 0,
-     knob1 : 0
     }
  }
 
@@ -76,9 +76,6 @@ class Synthesizer extends Component {
     const now = Tone.now();
     let type = this.state.waveform;
     synth.oscillator.type = type;
-
-    // CALL RECORDING FUNCTION ?
-    //this.handleRecording(synth);
 
     // CHANGE OCTAVE
     let octave = [3, 4];
@@ -175,8 +172,8 @@ class Synthesizer extends Component {
         break;
       default:
         break;
-    } //switch(key)
-}//chooseKey(key)
+    }
+}
 
  async handleRecording(synth){
      // RECORDING
@@ -209,7 +206,6 @@ class Synthesizer extends Component {
         audio.src = URL.createObjectURL(blob);
     };
  }
-
   render() {
     return (
       <>
@@ -217,16 +213,6 @@ class Synthesizer extends Component {
           <div class="screen">
           <div class="vst">
             <table class="settings_table">
-            {/*
-              <td colspan="2" class="synth_sity_image_cell">
-                <img
-                  class="synth_sity_image"
-                  alt=""
-                  src={Background}
-                  width="600px"
-                />
-              </td>
-              */}
 
               <tr>
                 <td colspan="2" class="synth_sity_title">
@@ -247,30 +233,7 @@ class Synthesizer extends Component {
                     </table>
                 </td>
 
-
-
               </tr>
-              {/*
-              <tr>
-                <td class="setting_cell">
-                <span>AUDIO RECORDING</span>
-                <br />
-                    <audio controls></audio>
-                </td>
-
-                <td class="setting_cell">
-                <span>RECORD</span>
-                <br />
-                    <button id="start_recording">
-                    <b>START</b>
-                    </button>
-
-                    <button id="stop_recording">
-                    <b>STOP</b>
-                    </button>
-                </td>
-              </tr>
-              */}
               <tr>
               <td class="setting_cell">
                 <div class="center">
@@ -289,9 +252,19 @@ class Synthesizer extends Component {
                 </div>
               </td>
 
-
                 <td class="setting_cell">
-                    <span></span>
+
+                <ReactMediaRecorder
+                      video
+                      render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
+                        <div>
+                          <p>{status}</p>
+                          <button onClick={startRecording}>Start Recording</button>
+                          <button onClick={stopRecording}>Stop Recording</button>
+                        </div>
+                      )}
+                    />
+
                 </td>
               </tr>
 
@@ -312,7 +285,6 @@ class Synthesizer extends Component {
                       </div>
                   </div>
               </td>
-
 
                 <td class="setting_cell">
                   <div class="settingsBar">
