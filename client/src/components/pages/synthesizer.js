@@ -1,98 +1,99 @@
-import React, { Component} from "react";
+import React, { Component } from "react";
 import "../css/Main.css";
 import Background from "../resources/cityscape_fin.png";
 import * as Tone from "tone";
 
 class Synthesizer extends Component {
-  constructor(){
+  constructor() {
     super();
-    this.state ={
-     waveform : "sine",
-     octave: 2,
-     volume : -20,
-     reverb : 0,
-     delay : 0,
-     recording : [],
-     recorder: 0
-    }
- }
-
- onChange(e){
-  this.setState({[e.target.name]: e.target.value});
-  console.log(e.target.name);
-  console.log(e.target.value);
- };
-
- async handleKeyDown(e){
-  console.log(e.key);
-  this.chooseKey(e.key.toUpperCase());
-
-}
-
- async handleKey(e) {
-   var key = "";
-   if (e.currentTarget.className === "black-key") {
-     e.stopPropagation();
-     key = e.currentTarget.textContent;
-   } else {
-     key = e.currentTarget.textContent[e.currentTarget.textContent.length - 1];
-   }
-   this.setState({
-    recording: [ ...this.state.recording, key]
-    });
-    this.chooseKey(key);
+    this.state = {
+      waveform: "sine",
+      octave: 2,
+      volume: -20,
+      reverb: 0,
+      delay: 0,
+      record: false,
+      recordings: []
+    };
   }
 
-  chooseKey(key){
-    // VOLUME
-    const vol = new Tone.Volume(this.state.volume).toDestination();
-    if(this.state.volume < -30)
-        vol.mute = true;
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
 
-    // REVERB EFFECT
-    const reverb = new Tone.JCReverb(this.state.reverb/100).toDestination();
-
-    // DELAY EFFECT
-    var delayTime = "0";
-    if(this.state.delay/100 !== 0)
-    {
-        delayTime = "8n";
+  async handleKeyDown(e) {
+    console.log(e.key);
+    if(this.state.record===true){
+      this.setState({
+        recordings: [...this.state.recordings, e.key.toUpperCase()]
+      })
     }
-    const feedbackDelay = new Tone.FeedbackDelay(delayTime, this.state.reverb/100).toDestination();
+    this.playSound(e.key.toUpperCase());
+  }
 
-    // CREATE SYNTH AND APPLY EFFECTS
-    const synth = new Tone.Synth();
-    synth.autostart = true;
-    if(this.state.reverb/100 === 0)
-        synth.chain(vol, feedbackDelay);
-    else {
-        synth.chain(vol, reverb, feedbackDelay);
+  async handleKey(e) {
+    var key = "";
+    if (e.currentTarget.className === "black-key") {
+      e.stopPropagation();
+      key = e.currentTarget.textContent;
+    } else {
+      key = e.currentTarget.textContent[e.currentTarget.textContent.length - 1];
+    }
+    if(this.state.record===true){
+      this.setState({
+        recordings: [...this.state.recordings, e.key]
+      })
+    }
+    this.playSound(key);
+  }
+
+  async handleStart(){
+    if(this.state.record){
+      this.setState({
+        record: false
+      })
+    } else{
+      this.setState({
+        record: true
+      })
     }
 
-    // APPLY WAVE TYPE
+      // this.state.recordings.forEach((note, i) => {
+      //   setTimeout(()=>{
+      //     console.log(note);
+      //     this.playSound(note);
+      //   }, 500*i);
+      // });
+  }
+
+  async handleStop(){
+    const audio = document.querySelector("audio");
+    const recording = this.state.record.stop();
+    // download the recording by creating an anchor element and blob url
+    const url = URL.createObjectURL(recording);
+    const anchor = document.createElement("a");
+    anchor.download = "recording.webm";
+    anchor.href = url;
+    anchor.click();
+  
+  }
+
+  chooseKey(key, synth) {
     const now = Tone.now();
-    let type = this.state.waveform;
-    synth.oscillator.type = type;
-
-    // CALL RECORDING FUNCTION ?
-    //this.handleRecording(synth);
 
     // CHANGE OCTAVE
     let octave = [3, 4];
-    console.log(`octave=${this.state.octave}`);
-    if(this.state.octave == 2)
-        console.log("dont do anything");
-    if(this.state.octave > 2){
-            octave[0] += this.state.octave - 2;
-            octave[1] += this.state.octave - 2;
+    if (this.state.octave > 2) {
+      octave[0] += this.state.octave - 2;
+      octave[1] += this.state.octave - 2;
     }
-    if(this.state.octave == 1){
-            octave[0] = 2;
-            octave[1] = 3;
+    if (this.state.octave === 1) {
+      octave[0] = 2;
+      octave[1] = 3;
     }
-    if(this.state.octave == 0){
-            octave[0] = 1;
-            octave[1] = 2;
+    if (this.state.octave === 0) {
+      octave[0] = 1;
+      octave[1] = 2;
     }
 
     switch (key) {
@@ -135,7 +136,7 @@ class Synthesizer extends Component {
         break;
       // RIGHT ROW
       case "Q":
-        synth.triggerAttackRelease(`C${octave[1]}`, '8n', now);
+        synth.triggerAttackRelease(`C${octave[1]}`, "8n", now);
         break;
       case "2":
         synth.triggerAttackRelease(`C#${octave[1]}`, "8n", now);
@@ -173,44 +174,55 @@ class Synthesizer extends Component {
       default:
         break;
     } //switch(key)
-}//chooseKey(key)
+  }
 
- async handleRecording(synth){
-     // RECORDING
-    const audio = document.querySelector('audio');
-    const actx = Tone.context;
-    const dest = actx.createMediaStreamDestination();
-    const recorder = new MediaRecorder(dest.stream);
+  playSound(key) {
+    const synth = new Tone.Synth();
+    this.setState({
+      synth1: synth
+    })
+    synth.autostart = true;
+    // VOLUME
+    const vol = new Tone.Volume(this.state.volume).toDestination();
+    if (this.state.volume < -30) vol.mute = true;
 
-    synth.connect(dest);
+    // REVERB EFFECT
+    const reverb = new Tone.JCReverb(this.state.reverb / 100).toDestination();
 
-     // ARRAY FOR DATA STREAM
-    const chunks = [];
-
-    // HANDLE RECORDING BUTTONS
-    var startedRecording = document.getElementById("start_recording");
-    var stoppedRecording = document.getElementById("stop_recording");
-    startedRecording.onclick = function(){
-    console.log("recording started");
-    recorder.start();
+    // DELAY EFFECT
+    var delayTime = "0";
+    if (this.state.delay / 100 !== 0) {
+      delayTime = "8n";
     }
-    stoppedRecording.onclick = function(){
-    console.log("recording stopped");
-    recorder.stop();
+    const feedbackDelay = new Tone.FeedbackDelay(
+      delayTime,
+      this.state.reverb / 100
+    ).toDestination();
+
+    // CREATE SYNTH AND APPLY EFFECTS
+
+    if (this.state.reverb / 100 === 0) synth.chain(vol, feedbackDelay);
+    else {
+      synth.chain(vol, reverb, feedbackDelay);
     }
 
-    // STORE DATA INTO ARRAY
-    recorder.ondataavailable = evt => chunks.push(evt.data);
-    recorder.onstop = evt => {
-        let blob = new Blob(chunks, {type: 'audio/ogg; codecs=opus'});
-        audio.src = URL.createObjectURL(blob);
-    };
- }
+    // APPLY WAVE TYPE
+    let type = this.state.waveform;
+    synth.oscillator.type = type;
+
+    // CALL RECORDING FUNCTION ?
+    //this.handleRecording(synth);
+    this.chooseKey(key, synth);
+  }
 
   render() {
     return (
       <>
-        <div class="main" onKeyDown={(e) => this.handleKeyDown(e)} tabIndex= "-1">
+        <div
+          class="main"
+          onKeyDown={(e) => this.handleKeyDown(e)}
+          tabIndex="-1"
+        >
           <div class="screen">
             <table class="settings_table">
               <td colspan="2" class="synth_sity_image_cell">
@@ -226,41 +238,47 @@ class Synthesizer extends Component {
                 <td colspan="2" class="synth_sity_title">
                   <h1>SynthCityX v1.0</h1>
                 </td>
-
               </tr>
 
               <tr>
                 <td class="setting_cell">
-                <span>AUDIO RECORDING</span>
-                <br />
-                    <audio controls></audio>
+                  <span>AUDIO RECORDING</span>
+                  <br />
+                  <audio controls></audio>
                 </td>
 
                 <td class="setting_cell">
-                <span>RECORD</span>
-                <br />
-                    <button id="start_recording">
-                    <b>START</b>
-                    </button>
-
-                    <button id="stop_recording">
-                    <b>STOP</b>
-                    </button>
+                  <span>RECORD</span>
+                  <br />
+                  <button onClick={()=>this.handleStart()}>
+                    <b>{(this.state.record) ? "Stop" : "Start"}</b>
+                  </button>
+                  <button disabled={this.state.recordings.length <= 0 ? true: false}><b>Listen and Save</b></button>
                 </td>
               </tr>
 
               <tr>
                 <td class="setting_cell">
-                    <span>OCTAVE</span>
-                    <br />
-                    <div>
-                        -2 <input type="range" min="0" max="4" name="octave" class="slider"
-                        value={this.state.octave} onChange={(e) => this.onChange(e)} id="octaveValue"/> +2
-                    </div>
+                  <span>OCTAVE</span>
+                  <br />
+                  <div>
+                    -2{" "}
+                    <input
+                      type="range"
+                      min="0"
+                      max="4"
+                      name="octave"
+                      class="slider"
+                      value={this.state.octave}
+                      onChange={(e) => this.onChange(e)}
+                      id="octaveValue"
+                    />{" "}
+                    +2
+                  </div>
                 </td>
 
                 <td class="setting_cell">
-                    <span>*empty*</span>
+                  <span>*empty*</span>
                 </td>
               </tr>
 
@@ -285,58 +303,76 @@ class Synthesizer extends Component {
                 <td class="setting_cell">
                   <div class="settingsBar">
                     <div class="center">
-                    <span>VOLUME</span>
-                    <br />
-                        <div class="volume_controller">
-                            <input type="range"
-                                   min="-30"
-                                   max="-10"
-                                   class="slider" value={this.state.volume} name="volume" onChange={(e) => this.onChange(e)}
-                                   id="volumeValue"/>
-                        </div>
+                      <span>VOLUME</span>
+                      <br />
+                      <div class="volume_controller">
+                        <input
+                          type="range"
+                          min="-30"
+                          max="-10"
+                          class="slider"
+                          value={this.state.volume}
+                          name="volume"
+                          onChange={(e) => this.onChange(e)}
+                          id="volumeValue"
+                        />
+                      </div>
                     </div>
                   </div>
                 </td>
-
               </tr>
 
               <tr>
-
-              <td class="setting_cell">
-                <div class="settingsBar">
-                  <div class="center">
-                  <span>DELAY</span>
-                  <br />
+                <td class="setting_cell">
+                  <div class="settingsBar">
+                    <div class="center">
+                      <span>DELAY</span>
+                      <br />
                       <div>
-                          <input type="range" min="0" max="70" name="delay" class="slider"
-                                 value={this.state.delay} onChange={(e) => this.onChange(e)} id="delayValue"/>
+                        <input
+                          type="range"
+                          min="0"
+                          max="70"
+                          name="delay"
+                          class="slider"
+                          value={this.state.delay}
+                          onChange={(e) => this.onChange(e)}
+                          id="delayValue"
+                        />
                       </div>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td class="setting_cell">
-                <div class="settingsBar">
-                  <div class="center">
-                  <span>REVERB</span>
-                  <br />
+                </td>
+                <td class="setting_cell">
+                  <div class="settingsBar">
+                    <div class="center">
+                      <span>REVERB</span>
+                      <br />
                       <div>
-                          <input type="range" min="0" max="70" name="reverb" value={this.state.reverb}
-                          onChange={(e) => this.onChange(e)} class="slider" id="reverbValue"/>
+                        <input
+                          type="range"
+                          min="0"
+                          max="70"
+                          name="reverb"
+                          value={this.state.reverb}
+                          onChange={(e) => this.onChange(e)}
+                          class="slider"
+                          id="reverbValue"
+                        />
                       </div>
+                    </div>
                   </div>
-                </div>
-              </td>
-
+                </td>
               </tr>
             </table>
 
-            <div class="keyboard" >
+            <div class="keyboard">
               <ul id="piano" class="piano">
                 <li
                   data-note="C3"
                   class="key"
                   onClick={(e) => this.handleKey(e)}
-                              >
+                >
                   <div
                     data-note="C#3"
                     class="black-key"
@@ -506,8 +542,7 @@ class Synthesizer extends Component {
             </div>
           </div>
         </div>
-        <div>
-        </div>
+        <div></div>
       </>
     );
   }
