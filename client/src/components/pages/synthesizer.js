@@ -61,7 +61,7 @@ class Synthesizer extends Component {
     {
         delayTime = "8n";
     }
-    const feedbackDelay = new Tone.FeedbackDelay(delayTime, this.state.reverb/100).toDestination();
+    const feedbackDelay = new Tone.FeedbackDelay(delayTime, this.state.delay/100).toDestination();
 
     // CREATE SYNTH AND APPLY EFFECTS
     const synth = new Tone.Synth();
@@ -93,6 +93,18 @@ class Synthesizer extends Component {
     if(this.state.octave == 0){
             octave[0] = 1;
             octave[1] = 2;
+    }
+
+    // DISPLAY VALUES ON MIDDLE SYNTH SCREEN
+    const valOfVolume = this.state.volume;
+    const newValOfVolume = valOfVolume / 10 * 100 + 200;
+    document.getElementById("effect1").innerHTML = "octave: " + (octave[0] - 3);
+    document.getElementById("effect2").innerHTML = "volume: " + Math.round(newValOfVolume);
+    document.getElementById("effect3").innerHTML = "delay: " + Math.round(this.state.delay/7*10);
+    if(this.state.reverb*1.5-5 == -5)
+        document.getElementById("effect4").innerHTML = "reverb: 0";
+    else {
+        document.getElementById("effect4").innerHTML = "reverb: " + Math.round(this.state.reverb*1.5-5);
     }
 
     switch (key) {
@@ -209,6 +221,7 @@ class Synthesizer extends Component {
   render() {
     return (
       <>
+      <hr />
         <div class="main" onKeyDown={(e) => this.handleKeyDown(e)} tabIndex= "-1">
           <div class="screen">
           <div class="vst">
@@ -218,9 +231,22 @@ class Synthesizer extends Component {
                 <td colspan="2" class="synth_sity_title">
                     <table class="logoTable">
                         <tr class="mainScreen">
-                            [ some info here ] <br />
-                            etc.               <br /> <br />
-                            seth klupka, vi vu
+                            <table class="effectsScreen">
+                                <tr id="effect1">
+                                    <br />Created By: <br />
+                                    Seth Klupka, Vi Vu
+                                    {/* Text above gets replaced by octave val */}
+                                </tr>
+                                <tr id="effect2">
+                                {/*volume value*/}
+                                </tr>
+                                <tr id="effect3">
+                                {/*delay value*/}
+                                </tr>
+                                <tr id="effect4">
+                                {/*reverb volume*/}
+                                </tr>
+                            </table>
                         </tr>
                         <tr>
                             <img

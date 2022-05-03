@@ -10,7 +10,7 @@ export default function NavBar() {
     <>
     <nav className="navbar">
       <div className="nav-container">
-        <NavLink exact to="/" className="nav-logo">
+        <NavLink exact to="/" className="nav-logo" style={{ color: 'white', textDecoration: 'inherit'}}>
           KV-SYN
           {/*
           <i className="nav-logo">
@@ -29,6 +29,17 @@ export default function NavBar() {
               onClick={handleClick}
             >
               Home
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink
+              exact
+              to="/social"
+              activeClassName="active"
+              className="nav-links"
+              onClick={handleClick}
+            >
+              Social
             </NavLink>
           </li>
           <li className="nav-item">

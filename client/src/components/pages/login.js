@@ -23,7 +23,7 @@ class Login extends Component {
       this.state.email.trim() === "" ||
       this.state.password.trim() === "" ||
       this.state.firstName.trim() === "" ||
-      this.state.lastName.trim() === "" 
+      this.state.lastName.trim() === ""
     ) {
       alert("Please make sure all the fields are filled.");
     } else {
@@ -79,7 +79,7 @@ class Login extends Component {
       }
     }
   }
-  
+
   handleChange = ({ target }) => {
     this.setState({ [target.name]: target.value });
   };
@@ -90,10 +90,11 @@ class Login extends Component {
     }
   };
 
-  
+
 	form () {
 		return (
 			<form className='account-form' onSubmit={(evt) => evt.preventDefault()}>
+            <hr />
 				<div className={'account-form-fields ' + (this.state.option === 1 ? 'sign-in' :  'sign-up') }>
 					<input id='email' name='email' type='email' placeholder='E-mail' value={this.state.email} onChange={this.handleChange} required />
 					<input id='password' name='password' type='password' placeholder='Password' value={this.state.password} onChange={this.handleChange} required/>
@@ -112,6 +113,7 @@ class Login extends Component {
 	create () {
 		return (
 			<form className='account-form' onSubmit={(evt) => evt.preventDefault()}>
+            <hr />
 				<div className={'account-form-fields ' + (this.state.option === 1 ? 'sign-in' :  'sign-up') }>
 					<input id='firstName' name='firstName' type='text' placeholder='First Name' value={this.state.firstName} onChange={this.handleChange} required/>
 					<input id='lastName' name='lastName' type='text' placeholder='Last Name' value={this.state.lastName} onChange={this.handleChange} required/>
@@ -129,7 +131,8 @@ class Login extends Component {
 	render () {
 		return (
 			<div className='container'>
-				<header>
+            <hr />
+				<header className='marginFromTop'>
 					<div className={'header-headings ' + (this.state.option === 1 ? 'sign-in' : 'sign-up') }>
 						<span>Sign in to your account</span>
 						<span>Create an account</span>
