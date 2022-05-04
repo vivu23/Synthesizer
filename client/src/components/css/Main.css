@@ -49,7 +49,6 @@ body{
   margin-right: 2rem;
 }
 
-
 .nav-links {
   color: white;
   text-decoration: none;
@@ -58,7 +57,8 @@ body{
   border-bottom: 3px solid transparent;
 }
 .nav-item {
-    text-decoration: none;
+    color: white;
+  text-decoration: none;
   line-height: 40px;
   margin-right: 1rem;
 }
@@ -69,19 +69,23 @@ body{
   height: 3px;
   width: 0;
   background: transparent;
-  transition: width 0.7s ease, background-color 0.5s ease
+  /*transition: width 0.7s ease, background-color 0.5s ease*/
 }
 
 .nav-item:hover:after {
-  width: 100%;
-  background:white;
+    background-color: red;
+}
+
+.nav-item{
+    color: white;
 }
 
 .nav-item .active {
   color: white;
   background-color: #333438;
   border: 1px solid #333438;
-  border-radius: 13px;
+  border-radius: 5px;
+  text-decoration: none;
 }
 
 .fa-code {
@@ -108,8 +112,8 @@ body{
 
   .nav-menu.active {
     left: 0px;
-    background: red;
     opacity: 1;
+    background: black;
     transition: all 0.5s ease;
     z-index: 1;
   }
@@ -149,6 +153,46 @@ body{
 .options {
   width: 100%;
 }
+}
+/*****************Profile Page*********************/
+.profilePage{
+    margin-top: 100px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 50px;
+    width: 900px;
+    height: 1000px;
+    background-color: #333438;
+    border-radius: 5px;
+    color: white;
+    position: relative;
+}
+
+.userImage{
+    height: 80px;
+    margin-bottom: 20px;
+}
+
+.profileHeading{
+    margin-left: 20px;
+    font-size: 40px;
+    font-weight: bold;
+}
+.horizontalLine{
+    background-color: white;
+    width: 790px;
+    height: 2px;
+}
+h4{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.recordings_pp{
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 200px;
 }
 
 /*****************Home*********************/
@@ -197,7 +241,10 @@ input[type=range]::-webkit-slider-thumb {
 #mainTick{
     font-size: 8px;
 }
-
+.effectsScreen{
+    margin: auto;
+    width: 50%;
+}
 .main{
      display: flex;
      justify-content: center;
@@ -213,6 +260,7 @@ input[type=range]::-webkit-slider-thumb {
     box-shadow: 0px 0px 50px 0px rgba(0,0,0,1);
     border: 25px solid transparent;
     background: url("../resources/wood-texture.jpg");
+    /*background: white;*/
     border-top: 0px solid transparent;
     border-bottom: 0px solid transparent;
     border-radius: 5px;
@@ -376,7 +424,7 @@ select:hover, select:focus {
 .container {
 	text-align: center;
 	color: white;
-  margin: 100px auto 0 auto;
+    margin: 0 auto 0 auto;
 }
 
 .container > header {
@@ -518,3 +566,20 @@ select:hover, select:focus {
 	outline: none;
 	background: orange;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**/

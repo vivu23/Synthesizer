@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
-import UserProfile from "../scripts/UserProfile";
+import { GlobalContext } from "../context/GlobalState";
 import "../css/Main.css";
 
 export default function NavBar() {
+  const isLoggedIn = useContext(GlobalContext).isLoggedIn;
+  const {logout} = useContext(GlobalContext).logout;
   const [click, setClick] = useState(false);
-  const session = UserProfile.getSession();
   const handleClick = () => setClick(!click);
+  const handleLogOut = () => {
+    setClick(!click);
+    logout(false);
+  }
   return (
     <>
     <nav className="navbar">
@@ -32,31 +37,44 @@ export default function NavBar() {
               Home
             </NavLink>
           </li>
+          {isLoggedIn ? (
+          <>
           <li className="nav-item">
             <NavLink
               exact
-              to="/about"
+              to="/social"
               activeClassName="active"
               className="nav-links"
               onClick={handleClick}
             >
-              About Us
+              Social
             </NavLink>
           </li>
-          {session ? (
-              <li className="nav-item">
-              <NavLink
-                exact
-                to="/profile"
-                activeClassName="active"
-                className="nav-links"
-                onClick={handleClick}
-              >
+          <li className="nav-item">
+            <NavLink
+              exact
+              to="/profile"
+              activeClassName="active"
+              className="nav-links"
+              onClick={handleClick}
+            >
               Profile
-              </NavLink>
-              </li>
-              ):(
-              <li className="nav-item">
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink
+              exact
+              to="/"
+              activeClassName="active"
+              className="nav-links"
+              onClick={handleLogOut}
+            >
+              Log Out
+            </NavLink>
+          </li>
+          </> 
+          ):(
+          <li className="nav-item">
                 <NavLink
                   exact
                   to="/login"
@@ -67,13 +85,13 @@ export default function NavBar() {
                 Login
                 </NavLink>
               </li>
-              )}
+          )}
           </ul>
           <div className="nav-icon" onClick={handleClick}>
             <i className={click ? "fas fa-times" : "fas fa-bars"}></i>
           </div>
-        </div>
-      </nav>
-    </>
+    </div>
+  </nav>
+  </>
   );
 }
