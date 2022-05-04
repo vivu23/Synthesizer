@@ -8,7 +8,7 @@ export default (state, action) => {
             }
         case 'NOTAUTH':
             return {
-                isLoggedIn: false
+                isLoggedIn: true
             }
         default:
             return state;

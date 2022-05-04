@@ -1,6 +1,7 @@
 import React, { Component, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalState";
+import  UserProfile  from "../scripts/UserProfile"
 import "../css/Main.css";
 
 class Login extends Component {
@@ -55,6 +56,7 @@ class Login extends Component {
         this.setState({ redirect: true });
       }
       this.context.login(true);
+      UserProfile.setName(this.state.email);
       event.preventDefault();
     }
   }
@@ -78,6 +80,7 @@ class Login extends Component {
       } else {
         //all the credential information is right, redirect to the homepage
         this.context.login(true);
+        UserProfile.setName(this.state.email);
         this.setState({ redirect: true });
       }
     }
@@ -221,6 +224,7 @@ class Login extends Component {
             Sign up
           </li>
         </ul>
+        {console.log(this.context)}
         {this.state.option === 1 ? this.form() : this.create()}
       </div>
     );
