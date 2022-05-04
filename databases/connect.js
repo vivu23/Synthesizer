@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const { validationResult } = require('express-validator');
+const { ignore } = require("nodemon/lib/rules");
+const { Binary } = require("mongodb");
 require("dotenv").config({ path: "config.env" });
 const username = process.env.UN;
 const pw = process.env.PW;
@@ -15,7 +17,7 @@ var userSchema = new mongoose.Schema({
     password: String,
     firstName: String,
     lastName: String,
-  });
+});
   
 var User = mongoose.model("users", userSchema);
 
@@ -58,6 +60,7 @@ module.exports = {
           password: info.password,
           firstName: info.firstName,
           lastName: info.lastName,
+          recordings: []
         }).then((postResponse) => {
           const response = postResponse;
           //console.log(response);

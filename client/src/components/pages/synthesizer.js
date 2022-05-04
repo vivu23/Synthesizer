@@ -1,34 +1,36 @@
 import React, { Component } from "react";
 import "../css/Main.css";
-import Background from "../resources/cityscape_fin.png";
+import Background from "../resources/KV-SYN-logo.png";
 import * as Tone from "tone";
 
 class Synthesizer extends Component {
-  constructor() {
+
+ constructor(){
     super();
-    this.state = {
-      waveform: "sine",
-      octave: 2,
-      volume: -20,
-      reverb: 0,
-      delay: 0,
-      record: false,
-      recordings: []
-    };
-  }
+    this.state ={
+     waveform : "sine",
+     octave: 2,
+     volume : -20,
+     reverb : 0,
+     delay : 0,
+     recordings : [],
+     recorder : false,
+     knob1 : 0,
+     audio: null
+    }
+ }
 
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
 
   async handleKeyDown(e) {
-    console.log(e.key);
-    if(this.state.record===true){
+    if(this.state.recorder===true){
       this.setState({
         recordings: [...this.state.recordings, e.key.toUpperCase()]
       })
     }
-    this.playSound(e.key.toUpperCase());
+    this.playSound(e.key.toUpperCase(), null);
   }
 
   async handleKey(e) {
@@ -39,46 +41,68 @@ class Synthesizer extends Component {
     } else {
       key = e.currentTarget.textContent[e.currentTarget.textContent.length - 1];
     }
-    if(this.state.record===true){
+    if(this.state.recorder===true){
       this.setState({
-        recordings: [...this.state.recordings, e.key]
+        recordings: [...this.state.recordings, key]
       })
     }
-    this.playSound(key);
+
+    this.playSound(key, null);
   }
 
   async handleStart(){
-    if(this.state.record){
+    if(this.state.recorder === true){
       this.setState({
-        record: false
+        recorder: false
       })
     } else{
       this.setState({
-        record: true
+        recorder: true
       })
     }
 
-      // this.state.recordings.forEach((note, i) => {
-      //   setTimeout(()=>{
-      //     console.log(note);
-      //     this.playSound(note);
-      //   }, 500*i);
-      // });
   }
 
-  async handleStop(){
-    const audio = document.querySelector("audio");
-    const recording = this.state.record.stop();
-    // download the recording by creating an anchor element and blob url
-    const url = URL.createObjectURL(recording);
-    const anchor = document.createElement("a");
-    anchor.download = "recording.webm";
-    anchor.href = url;
-    anchor.click();
+  async saveRecording(){
+
+  }
   
+  async handleRecording(){
+    const audio = document.querySelector('audio');
+    const synth = new Tone.Synth();
+    const actx  = Tone.context;
+    const dest  = actx.createMediaStreamDestination();
+    const recorder = new MediaRecorder(dest.stream);
+
+    synth.connect(dest);
+  
+    const chunks = [];
+      let note = 0;
+    Tone.Transport.scheduleRepeat(time => {
+      if (note === 0) recorder.start();
+      if (note > this.state.recordings.length) {
+        synth.triggerRelease(time)
+        recorder.stop();
+        Tone.Transport.stop();
+      } else this.playSound(this.state.recordings[note], synth);
+      note++;
+    }, '4n');
+  
+    recorder.ondataavailable = evt => chunks.push(evt.data);
+    recorder.onstop = evt => {
+      let blob = new Blob(chunks, { type: 'audio/mp3; codecs=opus' });
+      this.setState({
+        audio: blob
+      })
+      audio.src = URL.createObjectURL(blob);
+    };
+
+    Tone.Transport.start();
   }
 
   chooseKey(key, synth) {
+    console.log(this.state.recorder);
+
     const now = Tone.now();
 
     // CHANGE OCTAVE
@@ -176,11 +200,10 @@ class Synthesizer extends Component {
     } //switch(key)
   }
 
-  playSound(key) {
-    const synth = new Tone.Synth();
-    this.setState({
-      synth1: synth
-    })
+  playSound(key, synth) {
+    if(synth == null){
+      synth = new Tone.Synth();
+    }
     synth.autostart = true;
     // VOLUME
     const vol = new Tone.Volume(this.state.volume).toDestination();
@@ -209,9 +232,6 @@ class Synthesizer extends Component {
     // APPLY WAVE TYPE
     let type = this.state.waveform;
     synth.oscillator.type = type;
-
-    // CALL RECORDING FUNCTION ?
-    //this.handleRecording(synth);
     this.chooseKey(key, synth);
   }
 
@@ -224,22 +244,30 @@ class Synthesizer extends Component {
           tabIndex="-1"
         >
           <div class="screen">
+          <div class="vst">
             <table class="settings_table">
-              <td colspan="2" class="synth_sity_image_cell">
-                <img
-                  class="synth_sity_image"
-                  alt=""
-                  src={Background}
-                  width="600px"
-                />
-              </td>
-
               <tr>
                 <td colspan="2" class="synth_sity_title">
-                  <h1>SynthCityX v1.0</h1>
+                    <table class="logoTable">
+                        <tr class="mainScreen">
+                            [ some info here ] <br />
+                            etc.               <br /> <br />
+                            seth klupka, vi vu
+                        </tr>
+                        <tr>
+                            <img
+                              class="synth_sity_image"
+                              alt=""
+                              src={Background}
+                              width="600px"
+                            />
+                        </tr>
+                    </table>
                 </td>
-              </tr>
 
+
+              </tr>
+              
               <tr>
                 <td class="setting_cell">
                   <span>AUDIO RECORDING</span>
@@ -251,72 +279,92 @@ class Synthesizer extends Component {
                   <span>RECORD</span>
                   <br />
                   <button onClick={()=>this.handleStart()}>
-                    <b>{(this.state.record) ? "Stop" : "Start"}</b>
+                    <b>{(this.state.recorder) ? "Stop" : "Start"}</b>
                   </button>
-                  <button disabled={this.state.recordings.length <= 0 ? true: false}><b>Listen and Save</b></button>
+                  <button disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false} onClick={()=> this.handleRecording()}><b>Listen</b></button>
+                  <button disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false}><b>Save</b></button>
+                  <button disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false}><b>Reset</b></button>
+                </td>
+              </tr>
+             
+              <tr>
+              <td class="setting_cell">
+                <div class="center">
+                  <span>WAVEFORM</span>
+                  <br />
+                  <select
+                    name="waveform"
+                    id="waveform_forum"
+                    onChange={(e) => this.onChange(e)}
+                  >
+                    <option value="sine">SINE</option>
+                    <option value="square">SQUARE</option>
+                    <option value="sawtooth">SAWTOOTH</option>
+                    <option value="triangle">TRIANGLE</option>
+                  </select>
+                </div>
+              </td>
+
+
+                <td class="setting_cell">
+                    <span></span>
                 </td>
               </tr>
 
               <tr>
-                <td class="setting_cell">
+              <td class="setting_cell">
                   <span>OCTAVE</span>
                   <br />
                   <div>
-                    -2{" "}
-                    <input
-                      type="range"
-                      min="0"
-                      max="4"
-                      name="octave"
-                      class="slider"
-                      value={this.state.octave}
-                      onChange={(e) => this.onChange(e)}
-                      id="octaveValue"
-                    />{" "}
-                    +2
-                  </div>
-                </td>
+                      <input type="range" min="0" max="4" name="octave" class="slider"
+                      value={this.state.octave} onChange={(e) => this.onChange(e)} id="octaveValue"/>
+                      <div class="ticks">
+                        <span class="tick" id="mainTick">|</span>
+                        <span class="tick">|</span>
+                        <span class="tick" id="mainTick">|</span>
+                        <span class="tick">|</span>
+                        <span class="tick" id="mainTick">|</span>
 
-                <td class="setting_cell">
-                  <span>*empty*</span>
-                </td>
-              </tr>
-
-              <tr>
-                <td class="setting_cell">
-                  <div class="center">
-                    <span>WAVEFORM</span>
-                    <br />
-                    <select
-                      name="waveform"
-                      id="waveform_forum"
-                      onChange={(e) => this.onChange(e)}
-                    >
-                      <option value="sine">SINE</option>
-                      <option value="square">SQUARE</option>
-                      <option value="sawtooth">SAWTOOTH</option>
-                      <option value="triangle">TRIANGLE</option>
-                    </select>
+                      </div>
                   </div>
-                </td>
+              </td>
+
 
                 <td class="setting_cell">
                   <div class="settingsBar">
                     <div class="center">
-                      <span>VOLUME</span>
-                      <br />
-                      <div class="volume_controller">
-                        <input
-                          type="range"
-                          min="-30"
-                          max="-10"
-                          class="slider"
-                          value={this.state.volume}
-                          name="volume"
-                          onChange={(e) => this.onChange(e)}
-                          id="volumeValue"
-                        />
-                      </div>
+                    <span>VOLUME</span>
+                    <br />
+                        <div class="volume_controller">
+                            <input type="range"
+                                   min="-30"
+                                   max="-10"
+                                   class="slider" value={this.state.volume} name="volume" onChange={(e) => this.onChange(e)}
+                                   id="volumeValue"/>
+                        </div>
+                        <div class="ticks">
+                          <span class="tick" id="mainTick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick" id="mainTick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick">|</span>
+                          <span class="tick" id="mainTick">|</span>
+                        </div>
                     </div>
                   </div>
                 </td>
@@ -329,16 +377,31 @@ class Synthesizer extends Component {
                       <span>DELAY</span>
                       <br />
                       <div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="70"
-                          name="delay"
-                          class="slider"
-                          value={this.state.delay}
-                          onChange={(e) => this.onChange(e)}
-                          id="delayValue"
-                        />
+                          <input type="range" min="0" max="70" name="delay" class="slider"
+                                 value={this.state.delay} onChange={(e) => this.onChange(e)} id="delayValue"/>
+                                 <div class="ticks">
+                                   <span class="tick" id="mainTick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick" id="mainTick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick">|</span>
+                                   <span class="tick" id="mainTick">|</span>
+                                 </div>
                       </div>
                     </div>
                   </div>
@@ -349,16 +412,31 @@ class Synthesizer extends Component {
                       <span>REVERB</span>
                       <br />
                       <div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="70"
-                          name="reverb"
-                          value={this.state.reverb}
-                          onChange={(e) => this.onChange(e)}
-                          class="slider"
-                          id="reverbValue"
-                        />
+                          <input type="range" min="0" max="70" name="reverb" value={this.state.reverb}
+                          onChange={(e) => this.onChange(e)} class="slider" id="reverbValue"/>
+                          <div class="ticks">
+                            <span class="tick" id="mainTick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick" id="mainTick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick">|</span>
+                            <span class="tick" id="mainTick">|</span>
+                          </div>
                       </div>
                     </div>
                   </div>
@@ -539,6 +617,7 @@ class Synthesizer extends Component {
                   U
                 </li>
               </ul>
+            </div>
             </div>
           </div>
         </div>

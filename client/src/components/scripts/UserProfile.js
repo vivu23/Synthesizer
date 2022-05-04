@@ -1,4 +1,4 @@
-var Session = (function() {
+var UserProfile = (function() {
     var full_name = "";
     var main_session = false;
   
@@ -28,4 +28,4 @@ var Session = (function() {
   
   })();
   
-  export default Session;
+  export default UserProfile;

@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import Logo from '../resources/favicon-32x32.png';
+import UserProfile from "../scripts/UserProfile";
 import "../css/Main.css";
 
 export default function NavBar() {
   const [click, setClick] = useState(false);
+  const session = UserProfile.getSession();
   const handleClick = () => setClick(!click);
   return (
     <>
     <nav className="navbar">
       <div className="nav-container">
         <NavLink exact to="/" className="nav-logo">
-          Synthesizer
+          KV-SYN
+          {/*
           <i className="nav-logo">
               <img src={Logo} alt=""/>
           </i>
+          */}
         </NavLink>
 
         <ul className={click ? "nav-menu active" : "nav-menu"}>
@@ -40,7 +43,20 @@ export default function NavBar() {
               About Us
             </NavLink>
           </li>
-          <li className="nav-item">
+          {session ? (
+              <li className="nav-item">
+              <NavLink
+                exact
+                to="/profile"
+                activeClassName="active"
+                className="nav-links"
+                onClick={handleClick}
+              >
+              Profile
+              </NavLink>
+              </li>
+              ):(
+              <li className="nav-item">
                 <NavLink
                   exact
                   to="/login"
@@ -51,12 +67,13 @@ export default function NavBar() {
                 Login
                 </NavLink>
               </li>
+              )}
           </ul>
           <div className="nav-icon" onClick={handleClick}>
             <i className={click ? "fas fa-times" : "fas fa-bars"}></i>
           </div>
-    </div>
-  </nav>
-  </>
+        </div>
+      </nav>
+    </>
   );
 }

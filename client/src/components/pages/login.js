@@ -46,7 +46,7 @@ class Login extends Component {
             email: this.state.email,
             password: this.state.password,
             firstName: this.state.firstName,
-            lastName: this.state.lastName,
+            lastName: this.state.lastName
           }),
         })
           .then(res => res.json())
