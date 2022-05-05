@@ -7,6 +7,7 @@ const port = process.env.PORT || 5000;
 const dbConnection = require("./databases/connect");
 const user = require("./routes/User");
 const upload = require("./routes/Upload");
+
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
@@ -17,14 +18,12 @@ app.use('/login', user);
 app.use('/upload', upload);
 
 
-if(process.env.NODE.ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client', 'build')));
+app.use(express.static(path.join(__dirname, 'client', 'build')));
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'front_end', 'build', 'index.html'))
-  });
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'front_end', 'build', 'index.html'))
+});
 
-}
 
 app.listen(port, (req, res) => {
   dbConnection;

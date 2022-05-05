@@ -17,6 +17,7 @@
     "react-bootstrap": "^2.2.2",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^6.2.2",
+    "synthesizer": "file:..",
     "tone": "^14.8.38"
   }
 }
