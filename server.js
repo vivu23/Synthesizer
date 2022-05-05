@@ -12,15 +12,19 @@ app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 app.use(express.urlencoded({extended: false}));
 
-app.use(express.static(path.join(__dirname, "client", "build")));
 
 app.use('/login', user);
 app.use('/upload', upload);
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-});
 
+if(process.env.NODE.ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client', 'build')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'front_end', 'build', 'index.html'))
+  });
+
+}
 
 app.listen(port, (req, res) => {
   dbConnection;
