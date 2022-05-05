@@ -99,6 +99,7 @@ input[type=submit] {
     cursor:pointer;
     -webkit-border-radius: 5px;
     border-radius: 5px;
+    text-align: right;
 }
 
 input[type=file]{
@@ -125,4 +126,10 @@ input[type=file]::file-selector-button{
     margin-left: 20px;
     width: 80px;
     cursor: pointer;
+}
+
+.messageBoardTitle{
+    text-align: center;
+    color: white;
+    font-size: 30px;
 }

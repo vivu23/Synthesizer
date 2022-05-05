@@ -55,13 +55,14 @@ class Profile extends Component {
                   </span>
                   <hr class="horizontalLine" />
                   <h4> Account Information </h4>
-                  <p> First: {this.state.person.firstName}</p>
-                  <p> Last: {this.state.person.lastName}</p>
+                  <p> First Name: {this.state.person.firstName}</p>
+                  <p> Last Name: {this.state.person.lastName}</p>
                   <p> Email: {this.state.person.email}</p>
 
                   <div class="recordings_pp">
                     <h4> Recordings </h4>
                     <hr class="horizontalLine" />
+                    <span class="noRecordings">No recordings.</span>
                   </div>
                 </td>
               </tr>

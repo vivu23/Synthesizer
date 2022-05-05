@@ -67,7 +67,7 @@ class Synthesizer extends Component {
   async saveRecording(){
 
   }
-  
+
   async handleRecording(){
     const audio = document.querySelector('audio');
     const synth = new Tone.Synth();
@@ -76,7 +76,7 @@ class Synthesizer extends Component {
     const recorder = new MediaRecorder(dest.stream);
 
     synth.connect(dest);
-  
+
     const chunks = [];
       let note = 0;
     Tone.Transport.scheduleRepeat(time => {
@@ -88,7 +88,7 @@ class Synthesizer extends Component {
       } else this.playSound(this.state.recordings[note], synth);
       note++;
     }, '4n');
-  
+
     recorder.ondataavailable = evt => chunks.push(evt.data);
     recorder.onstop = evt => {
       let blob = new Blob(chunks, { type: 'audio/mp3; codecs=opus' });
@@ -293,7 +293,7 @@ class Synthesizer extends Component {
 
 
               </tr>
-              
+
               <tr>
                 <td class="setting_cell">
                   <span>AUDIO RECORDING</span>
@@ -304,17 +304,17 @@ class Synthesizer extends Component {
                 <td class="setting_cell">
                   <span>RECORD</span>
                   <br />
-                  <button onClick={()=>this.handleStart()}>
+                  <button class="recordingButton" onClick={()=>this.handleStart()}>
                     <b>{(this.state.recorder) ? "Stop" : "Start"}</b>
                   </button>
-                  <button disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false} onClick={()=> this.handleRecording()}><b>Listen</b></button>
-                  <button disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false}><b>Save</b></button>
-                  <button disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false}><b>Reset</b></button>
+                  <button class="recordingButton" disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false} onClick={()=> this.handleRecording()}><b>Listen</b></button>
+                  <button class="recordingButton" disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false}><b>Save</b></button>
+                  <button class="recordingButton" disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false}><b>Reset</b></button>
                 </td>
               </tr>
-             
+
               <tr>
-              <td class="setting_cell">
+              <td colspan="2" class="setting_cell">
                 <div class="center">
                   <span>WAVEFORM</span>
                   <br />
@@ -330,21 +330,12 @@ class Synthesizer extends Component {
                   </select>
                 </div>
               </td>
-
+              {/*
                 <td class="setting_cell">
 
-                <ReactMediaRecorder
-                      video
-                      render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
-                        <div>
-                          <p>{status}</p>
-                          <button onClick={startRecording}>Start Recording</button>
-                          <button onClick={stopRecording}>Stop Recording</button>
-                        </div>
-                      )}
-                    />
 
-                </td>
+
+                </td>*/}
               </tr>
 
               <tr>

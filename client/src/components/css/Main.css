@@ -7,6 +7,53 @@ body{
     background-color: #151516;
 }
 
+/****************audio controls******************/
+
+audio{
+    color: white;
+}
+audio::-webkit-media-controls-enclosure {
+    border-radius: 2px;
+    font-weight: normal;
+    background: #151E0B;
+    box-shadow: 0px 2px 2px 1px rgba(255,255,255,0.1), inset 0px 8px 30px 0px rgba(0,0,0,0.1);
+    margin-top:15px;
+}
+audio::-webkit-media-controls-panel{
+    box-shadow: 0px 2px 2px 1px rgba(255,255,255,0.1), inset 0px 8px 30px 0px rgba(0,0,0,0.1);
+}
+
+audio::-webkit-media-controls-time-remaining-display{
+    color: #C3F3CB;
+    text-shadow: 0px 0px 10px #C3F3CB, 0 0 20px #C3F3CB;
+    font-family: 'digital-7', sans-serif;
+}
+audio::-webkit-media-controls-current-time-display{
+    color: #C3F3CB;
+    text-shadow: 0px 0px 10px #C3F3CB, 0 0 20px #C3F3CB;
+    font-family: 'digital-7', sans-serif;
+}
+
+.recordingButton{
+    color: #B0B0B2;
+    margin-right: 20px;
+    background: #333438;
+    border-radius: 3px;
+    padding-left: 10px;
+    padding-right: 15px;
+    margin-top:27px;
+}
+button:disabled,
+button[disabled]{
+    color: #4d4d4d;
+    margin-right: 20px;
+    background: #333438;
+    border-radius: 3px;
+    padding-left: 10px;
+    padding-right: 15px;
+    margin-top:27px;
+}
+
 /****************Nav Bar*************************/
 .navbar {
   background-color: #151516;
@@ -161,8 +208,8 @@ body{
     margin-left: auto;
     margin-right: auto;
     padding: 50px;
-    width: 900px;
-    height: 1000px;
+    width: 700px;
+
     background-color: #333438;
     border-radius: 5px;
     color: white;
@@ -170,19 +217,19 @@ body{
 }
 
 .userImage{
-    height: 80px;
+    height: 50px;
     margin-bottom: 20px;
 }
 
 .profileHeading{
     margin-left: 20px;
-    font-size: 40px;
+    font-size: 30px;
     font-weight: bold;
 }
 .horizontalLine{
-    background-color: white;
-    width: 790px;
-    height: 2px;
+    background-color: gray;
+    width: 590px;
+    height: 1px;
 }
 h4{
     margin-top: 20px;
@@ -190,9 +237,12 @@ h4{
 }
 
 .recordings_pp{
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 200px;
+    margin-top: 100px;
+}
+
+.noRecordings{
+    text-align: center;
+    color: gray;
 }
 
 /*****************Home*********************/

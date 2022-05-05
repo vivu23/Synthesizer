@@ -13,16 +13,16 @@ class Social extends Component {
 	render () {
 		return (
 			<div>
-            <hr />
-
             {/* FORMS FOR POSTING -- START*/}
             <div class="formInputs">
+            <span class="messageBoardTitle">Message Board</span>
+            <hr />
                 <form>
                     {/* TEXT SUBMISSION */}
                     <label style={{color: 'white'}}>
                         <textarea placeholder="Say something..." type="text" name="name" />
                     </label><br />
-                    <input type="submit" value="Post" />
+                    <input class="textSubmitButton" type="submit" value="Post" />
 
                     {/* FILE UPLOAD -- NEED TO MAKE SURE FILE == IMG */}
                     <span class="image-upload">
