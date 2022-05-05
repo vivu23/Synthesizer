@@ -614,7 +614,7 @@ select:hover, select:focus {
 
 .btn-submit-form:active, .btn-submit-form:focus {
 	outline: none;
-	background: orange;
+	background: lightblue;
 }
 
 

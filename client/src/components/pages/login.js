@@ -198,7 +198,7 @@ class Login extends Component {
   render() {
     return (
       <div className="container">
-        <hr />
+    
         <header className="marginFromTop">
           <div
             className={
