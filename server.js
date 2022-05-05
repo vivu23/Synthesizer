@@ -1,15 +1,21 @@
+const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
+const methodOverride = require('method-override');
 const path = require('path');
 const port = process.env.PORT || 5000;
 const dbConnection = require("./databases/connect");
 const user = require("./routes/User");
-
+const upload = require("./routes/Upload");
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(methodOverride('_method'));
+app.use(express.urlencoded({extended: false}));
 
 app.use(express.static(path.join(__dirname, "client", "build")));
 
 app.use('/login', user);
+app.use('/upload', upload);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, "client", "build", "index.html"));

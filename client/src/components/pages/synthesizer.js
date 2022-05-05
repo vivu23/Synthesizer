@@ -2,13 +2,16 @@ import React, { Component } from "react";
 import "../css/Main.css";
 import Background from "../resources/KV-SYN-logo.png";
 import * as Tone from "tone";
-import { ReactMediaRecorder } from "react-media-recorder";
+import { GlobalContext } from "../context/GlobalState";
+import UserProfile from "../scripts/UserProfile";
+import { Navigate } from "react-router-dom";
 
 class Synthesizer extends Component {
-
+static contextType = GlobalContext
  constructor(){
     super();
     this.state ={
+     user: null, 
      waveform : "sine",
      octave: 2,
      volume : -20,
@@ -20,6 +23,16 @@ class Synthesizer extends Component {
      audio: null
     }
  }
+
+  async componentDidMount(){
+    if(this.context.isLoggedIn){
+      var email = UserProfile.getName();
+      const url = "/login/";
+      const response = await fetch(url + email);
+      const data = await response.json();
+      this.setState({user: data});
+    }
+  }
 
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
@@ -65,8 +78,26 @@ class Synthesizer extends Component {
   }
 
   async saveRecording(){
-
+    console.log(this.context);
+    if(!this.context.isLoggedIn){
+        alert("You need to login to save this recording!");
+    }
+    else{
+      let input = prompt("Please enter the name for this recording!");
+      var data = new FormData()
+      data.append('file', this.state.audio);
+      data.append('fileName', input);
+      await fetch("upload/" + this.state.user._id, {
+        method: "POST",
+        body: data
+      })
+      .then((res) => res.json())
+      .then((body) => console.log(body));
+      alert("Recording Saved Successfully!");
+      window.location.reload();
+    }
   }
+
 
   async handleRecording(){
     const audio = document.querySelector('audio');
@@ -308,7 +339,7 @@ class Synthesizer extends Component {
                     <b>{(this.state.recorder) ? "Stop" : "Start"}</b>
                   </button>
                   <button class="recordingButton" disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false} onClick={()=> this.handleRecording()}><b>Listen</b></button>
-                  <button class="recordingButton" disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false}><b>Save</b></button>
+                  <button class="recordingButton" disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false} onClick={()=> this.saveRecording()}><b>Save</b></button>
                   <button class="recordingButton" disabled={(this.state.recordings.length <= 0 || this.state.recorder) ? true: false}><b>Reset</b></button>
                 </td>
               </tr>

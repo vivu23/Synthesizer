@@ -1,16 +1,40 @@
 const mongoose = require("mongoose");
 const { validationResult } = require('express-validator');
-const { ignore } = require("nodemon/lib/rules");
-const { Binary } = require("mongodb");
+const multer = require('multer');
 require("dotenv").config({ path: "config.env" });
 const username = process.env.UN;
 const pw = process.env.PW;
 const uri = "mongodb+srv://" + username + ":" + pw + "@cluster0.u5nnm.mongodb.net/synthesizerDB?retryWrites=true&w=majority";
+const Grid = require('gridfs-stream');
+let streamBuffers = require('stream-buffers');
+
 
 mongoose.connect(uri, {useNewUrlParser: true,useUnifiedTopology: true}, function( err, client ) {
     if (err) throw err;
     console.log("Connected to MongoDB.");
 });
+
+var Schema = mongoose.Schema;
+var conn = mongoose.connection;
+
+Grid.mongo = mongoose.mongo;
+var gfs;
+conn.once('open', function () {
+  console.log('open');
+  gfs = Grid(conn.db);
+});
+
+var upload = multer();
+
+var mediaFileSchema = new mongoose.Schema({
+  fileName: String,
+  encoding: String,
+  size: String,
+  mimetype: String,
+  userid: String
+});
+
+var MediaFile = mongoose.model('MediaFile', mediaFileSchema);
 
 var userSchema = new mongoose.Schema({
     email: String,
@@ -22,6 +46,57 @@ var userSchema = new mongoose.Schema({
 var User = mongoose.model("users", userSchema);
 
 module.exports = {
+  upload,
+  uploadFile(req, res){
+
+    console.log(req.file);
+    console.log(req.body);
+    var body = req.body;
+    req.file.fileName = body.fileName;
+    var newMediaFile = new MediaFile(req.file);
+    newMediaFile.userid = req.params.userid;
+
+    newMediaFile.save((err, mediaFile)=>{
+      if(err){
+        return res.status(500).send('Error occured: database error')
+      }
+      
+      var myReadableStreamBuffer = new streamBuffers.ReadableStreamBuffer({
+        frequency: 10,  //in miliseconds
+        chunkSize: 2048 //in bytes
+      });
+
+      myReadableStreamBuffer.put(req.file.buffer);
+      myReadableStreamBuffer.stop();
+
+      //streaming to gridfs
+      //filename to store in mongodb 
+      var writeStream = gfs.createWriteStream({
+        fileName: 'w/'+ req.params.id
+      });
+      myReadableStreamBuffer.pipe(writeStream);
+      writeStream.on('close',(file)=>{
+        console.log(file.fileName + 'Written to DB');
+      });
+
+      res.json(mediaFile);
+    })
+  },
+  findRecordings(req,res){
+    MediaFile.findOne({id: req.params.id}, (err, mediaFile)=>{
+      if(err || mediaFile == null){
+        return res.status(500).send('Error occurred: database error');
+      }
+      res.set('Content-type', mediaFile.mimetype);
+     
+ //read from mongodb
+ const readstream = gfs.createReadStream({'_id': mediaFile._id})
+ readstream.on('error', function (error) {
+      res.sendStatus(500)
+ })
+ readstream.pipe(res)
+});
+  },
 	checkLogin(req, res){
         console.log("Checking login credentials...");
 
@@ -60,7 +135,6 @@ module.exports = {
           password: info.password,
           firstName: info.firstName,
           lastName: info.lastName,
-          recordings: []
         }).then((postResponse) => {
           const response = postResponse;
           //console.log(response);
