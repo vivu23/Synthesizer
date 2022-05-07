@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useEffect, useState, useReducer}from 'react';
-import AppReducer from './AppReducer'
+import AppReducer from './AppReducer';
+
 
 const initialState = {
-    isLoggedIn: false
+    isLoggedIn: false, 
+    synth: null
 }
 
 export const GlobalContext = createContext(initialState);
@@ -23,9 +25,15 @@ export const GlobalProvider = ({children}) => {
             payload: status
         })
     }
+    function createSynth(){
+        dispatch({
+            type: 'SYNTH',
+            payload: null
+        })
+    }
 
     return(
-        <GlobalContext.Provider value = {{isLoggedIn: state.isLoggedIn, login, logout}}>
+        <GlobalContext.Provider value = {{isLoggedIn: state.isLoggedIn, synth: state.synth, createSynth,login, logout}}>
             {children}
         </GlobalContext.Provider>
     )

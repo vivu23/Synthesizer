@@ -1,4 +1,6 @@
 import React from 'react';
+import * as Tone from "tone";
+
 
 export default (state, action) => {
     switch(action.type) {
@@ -10,6 +12,12 @@ export default (state, action) => {
             return {
                 isLoggedIn: true
             }
+        case 'SYNTH':
+            return{
+                synth: new Tone.Synth()
+            }
+        
+            
         default:
             return state;
     }

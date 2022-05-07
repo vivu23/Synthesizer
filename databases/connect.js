@@ -9,13 +9,10 @@ const Grid = require('gridfs-stream');
 let streamBuffers = require('stream-buffers');
 
 
-mongoose.connect(uri,   { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
-  , function( err, client ) {
-    if (err) throw err;
-    console.log("Connected to MongoDB.");
-});
+mongoose.connect(process.env.MONGODB_URI || uri, { useNewUrlParser: true })
+        .then(connect => console.log('Connected to mongodb..'))
+        .catch(e => console.log('could not connect to mongodb', e));
 
-var Schema = mongoose.Schema;
 var conn = mongoose.connection;
 
 Grid.mongo = mongoose.mongo;

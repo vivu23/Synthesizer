@@ -4,7 +4,7 @@ import Background from "../resources/KV-SYN-logo.png";
 import * as Tone from "tone";
 import { GlobalContext } from "../context/GlobalState";
 import UserProfile from "../scripts/UserProfile";
-import { Navigate } from "react-router-dom";
+import { throws } from "assert";
 
 class Synthesizer extends Component {
 static contextType = GlobalContext
@@ -20,11 +20,13 @@ static contextType = GlobalContext
      recordings : [],
      recorder : false,
      knob1 : 0,
-     audio: null
+     audio: null,
     }
  }
 
   async componentDidMount(){
+    if(this.context.synth == null){}
+    this.context.createSynth();
     if(this.context.isLoggedIn){
       var email = UserProfile.getName();
       const url = "/login/";
@@ -44,7 +46,7 @@ static contextType = GlobalContext
         recordings: [...this.state.recordings, e.key.toUpperCase()]
       })
     }
-    this.playSound(e.key.toUpperCase(), null);
+    this.playSound(e.key.toUpperCase());
   }
 
   async handleKey(e) {
@@ -61,7 +63,7 @@ static contextType = GlobalContext
       })
     }
 
-    this.playSound(key, null);
+    this.playSound(key);
   }
 
   async handleStart(){
@@ -101,22 +103,21 @@ static contextType = GlobalContext
 
   async handleRecording(){
     const audio = document.querySelector('audio');
-    const synth = new Tone.Synth();
     const actx  = Tone.context;
     const dest  = actx.createMediaStreamDestination();
     const recorder = new MediaRecorder(dest.stream);
 
-    synth.connect(dest);
+    this.context.synth.connect(dest);
 
     const chunks = [];
       let note = 0;
     Tone.Transport.scheduleRepeat(time => {
       if (note === 0) recorder.start();
       if (note > this.state.recordings.length) {
-        synth.triggerRelease(time)
+        this.context.synth.triggerRelease(time)
         recorder.stop();
         Tone.Transport.stop();
-      } else this.playSound(this.state.recordings[note], synth);
+      } else this.playSound(this.state.recordings[note]);
       note++;
     }, '4n');
 
@@ -132,9 +133,7 @@ static contextType = GlobalContext
     Tone.Transport.start();
   }
 
-  chooseKey(key, synth) {
-    console.log(this.state.recorder);
-
+  chooseKey(key) {
     const now = Tone.now();
 
     // CHANGE OCTAVE
@@ -167,88 +166,86 @@ static contextType = GlobalContext
     switch (key) {
       // LEFT ROW
       case "Z":
-        synth.triggerAttackRelease(`C${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`C${octave[0]}`, "8n", now);
         break;
       case "S":
-        synth.triggerAttackRelease(`C#${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`C#${octave[0]}`, "8n", now);
         break;
       case "X":
-        synth.triggerAttackRelease(`D${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`D${octave[0]}`, "8n", now);
         break;
       case "D":
-        synth.triggerAttackRelease(`D#${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`D#${octave[0]}`, "8n", now);
         break;
       case "C":
-        synth.triggerAttackRelease(`E${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`E${octave[0]}`, "8n", now);
         break;
       case "V":
-        synth.triggerAttackRelease(`F${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`F${octave[0]}`, "8n", now);
         break;
       case "G":
-        synth.triggerAttackRelease(`F#${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`F#${octave[0]}`, "8n", now);
         break;
       case "B":
-        synth.triggerAttackRelease(`G${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`G${octave[0]}`, "8n", now);
         break;
       case "H":
-        synth.triggerAttackRelease(`G#${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`G#${octave[0]}`, "8n", now);
         break;
       case "N":
-        synth.triggerAttackRelease(`A${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`A${octave[0]}`, "8n", now);
         break;
       case "J":
-        synth.triggerAttackRelease(`A#${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`A#${octave[0]}`, "8n", now);
         break;
       case "M":
-        synth.triggerAttackRelease(`B${octave[0]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`B${octave[0]}`, "8n", now);
         break;
       // RIGHT ROW
       case "Q":
-        synth.triggerAttackRelease(`C${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`C${octave[1]}`, "8n", now);
         break;
       case "2":
-        synth.triggerAttackRelease(`C#${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`C#${octave[1]}`, "8n", now);
         break;
       case "W":
-        synth.triggerAttackRelease(`D${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`D${octave[1]}`, "8n", now);
         break;
       case "3":
-        synth.triggerAttackRelease(`D#${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`D#${octave[1]}`, "8n", now);
         break;
       case "E":
-        synth.triggerAttackRelease(`E${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`E${octave[1]}`, "8n", now);
         break;
       case "R":
-        synth.triggerAttackRelease(`F${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`F${octave[1]}`, "8n", now);
         break;
       case "5":
-        synth.triggerAttackRelease(`F#${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`F#${octave[1]}`, "8n", now);
         break;
       case "T":
-        synth.triggerAttackRelease(`G${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`G${octave[1]}`, "8n", now);
         break;
       case "6":
-        synth.triggerAttackRelease(`G#${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`G#${octave[1]}`, "8n", now);
         break;
       case "Y":
-        synth.triggerAttackRelease(`A${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`A${octave[1]}`, "8n", now);
         break;
       case "7":
-        synth.triggerAttackRelease(`A#${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`A#${octave[1]}`, "8n", now);
         break;
       case "U":
-        synth.triggerAttackRelease(`B${octave[1]}`, "8n", now);
+        this.context.synth.triggerAttackRelease(`B${octave[1]}`, "8n", now);
         break;
       default:
         break;
     } //switch(key)
   }
 
-  playSound(key, synth) {
-    if(synth == null){
-      synth = new Tone.Synth();
-    }
-    synth.autostart = true;
+  playSound(key) {
+   
+    this.context.synth.autostart = true;
     // VOLUME
     const vol = new Tone.Volume(this.state.volume).toDestination();
     if (this.state.volume < -30) vol.mute = true;
@@ -268,15 +265,15 @@ static contextType = GlobalContext
 
     // CREATE SYNTH AND APPLY EFFECTS
 
-    if (this.state.reverb / 100 === 0) synth.chain(vol, feedbackDelay);
+    if (this.state.reverb / 100 === 0) this.context.synth.chain(vol, feedbackDelay);
     else {
-      synth.chain(vol, reverb, feedbackDelay);
+      this.context.synth.chain(vol, reverb, feedbackDelay);
     }
 
     // APPLY WAVE TYPE
     let type = this.state.waveform;
-    synth.oscillator.type = type;
-    this.chooseKey(key, synth);
+    this.context.synth.oscillator.type = type;
+    this.chooseKey(key);
   }
 
   render() {
