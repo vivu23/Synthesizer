@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { Component } from "react";
 import UserProfile from "../scripts/UserProfile";
 import { Navigate } from "react-router-dom";
@@ -75,16 +74,3 @@ class Profile extends Component {
   }
 }
 export default Profile;
-||||||| merged common ancestors
-=======
-import React from "react";
-import '../css/Main.css';
-
-export const Profile = () => {
-    return (
-     <h1>HELLO!</h1>
-    );
-  };
-  
-export default Profile;
->>>>>>> f10a77a7ffbb2f20a68610ffbae40d1af5977176

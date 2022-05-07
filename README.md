@@ -21,6 +21,7 @@ To the client and server concurrently, use the following command:
 To run the server by itself, use the following command:
 ### `npm run server`
 
+
 ### Client 
 
 To run the client (by itself), use the following command:

@@ -49,9 +49,6 @@ var User = mongoose.model("users", userSchema);
 module.exports = {
   upload,
   uploadFile(req, res){
-
-    console.log(req.file);
-    console.log(req.body);
     var body = req.body;
     req.file.fileName = body.fileName;
     var newMediaFile = new MediaFile(req.file);
@@ -79,7 +76,6 @@ module.exports = {
       writeStream.on('close',(file)=>{
         console.log(file.fileName + 'Written to DB');
       });
-
       res.json(mediaFile);
     })
   },

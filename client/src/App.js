@@ -4,6 +4,8 @@ import Synthesizer from "./components/pages/synthesizer";
 import Login from "./components/pages/login";
 import Navbar from './components/pages/navbar';
 import Profile from './components/pages/profile';
+import Social from './components/pages/social';
+import {GlobalProvider} from './components/context/GlobalState'
 
 class App extends Component {
 
@@ -21,9 +23,11 @@ class App extends Component {
             <Route path='/social' element={<Social/>} />
             </Routes>
           </div>
-          </Router>
-          </GlobalProvider>
-          </>
-)
+        </Router>
+      </GlobalProvider>
+      </>
+    );
+  }
 }
-}
+
+export default App;
