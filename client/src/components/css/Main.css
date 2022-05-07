@@ -154,6 +154,7 @@ button[disabled]{
     top: 80px;
     left: -110%;
     opacity: 1;
+    background: black;
     transition: all 0.5s ease;
   }
 
