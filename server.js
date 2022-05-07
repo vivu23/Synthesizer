@@ -1,11 +1,31 @@
-const express = require('express');
+const bodyParser = require("body-parser");
+const express = require("express");
 const app = express();
+const methodOverride = require('method-override');
+const path = require('path');
 const port = process.env.PORT || 5000;
+const dbConnection = require("./databases/connect");
+const user = require("./routes/User");
+const upload = require("./routes/Upload");
 
-// console.log that your server is up and running
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.use(express.json());
+app.use(bodyParser.json());
+app.use(methodOverride('_method'));
+app.use(express.urlencoded({extended: false}));
 
-// create a GET route
-app.get('/express_backend', (req, res) => {
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
+
+app.use('/login', user);
+app.use('/upload', upload);
+
+
+app.use(express.static(path.join(__dirname, 'client', 'build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'front_end', 'build', 'index.html'))
+});
+
+
+app.listen(port, (req, res) => {
+  dbConnection;
+  console.log(`Server listening on port: ${port}`);
 });
